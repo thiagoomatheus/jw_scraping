@@ -1,6 +1,7 @@
 import axios from "axios"
 import * as cheerio from "cheerio"
 import { NextRequest, NextResponse } from "next/server"
+import { z } from "zod"
 
 function returnProps(date:Date) {
     const data: {
@@ -168,13 +169,12 @@ async function scrapePartes(month1: string, month2: string, year: number, date: 
 }
 
 async function GET(req:NextRequest, res: NextResponse) {
-    const body: {
-        date: Date
-    } = await req.json()
-    if (!body.date) {
-        return NextResponse.json({ error: "Missing body" }, { status: 400 })
-    }
+    const getPartesSchema = z.object({date: z.date()})
+
+    const body = getPartesSchema.parse(await req.json())
+
     const { month1, month2, year, date } = returnProps(body.date)
+
     try {
         const partes = await scrapePartes(month1, month2, year, date )
         return NextResponse.json({ partes }, { status: 200 })
