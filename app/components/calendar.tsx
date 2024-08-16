@@ -52,7 +52,7 @@ export function Calendar() {
                     "Selecione uma semana"
                 }
             />
-            {selectedWeek && <input type="number" className="hidden" name="semana_inicial" readOnly value={selectedWeek.weekNumber} />}
+            {selectedWeek && <input type="number" className="hidden" name="week" readOnly value={selectedWeek.weekNumber} />}
         </>
     )
 }

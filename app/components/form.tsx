@@ -7,16 +7,16 @@ import { Calendar } from "./calendar";
 import Instructions from "./instructions";
 
 export default function Form() {
-    const { data, comecar, inserirLayout } = useForm()
+    const { dataForm, comecar, inserirLayout, inserirWeek } = useForm()
     return (
         <div className="flex flex-col w-full border gap-3 p-3 rounded-lg" >
-            {data === undefined && (
+            {dataForm === undefined && (
                 <>
                     <Instructions />
                     <button className="bg-blue-500 p-2 rounded-lg text-white shadow-lg font-bold" onClick={comecar}>Começar</button>
                 </>
             )}
-            {data && !data.layout && (
+            {dataForm && !dataForm.layout && (
                 <SectionTitle title="Layout">
                     <form className="flex flex-col items-center w-full gap-3" action={inserirLayout}>
                         <p>Selecione o layout que deseja:</p>
@@ -55,11 +55,11 @@ export default function Form() {
                     </form>
                 </SectionTitle>
             )}
-            {data && data.layout && (
+            {dataForm && dataForm.layout && (
                 <SectionTitle title="Semana Inicial">
                     <div className="flex flex-col gap-5">
                         <p>Agora, selecione a semana em que as designações vão comecar.</p>
-                        <form className="flex flex-col items-center w-full gap-3" action={async (formData: FormData) => console.log(formData.get("semana_inicial") as string)}>
+                        <form className="flex flex-col items-center w-full gap-3" action={inserirWeek}>
                             <label className="flex flex-col gap-5">
                                 <Calendar />
                             </label>

@@ -5,15 +5,15 @@ import toast from "react-hot-toast"
 import { z } from "zod"
 
 export default function useForm() {
-    const [data, setData] = useState<{
+    const [dataForm, setDataForm] = useState<{
         layout?: "quinzenal" | "mensal_padrao" | "mensal_especial"
-        inicialDate?: number
+        week?: number
     } | undefined>(undefined)
 
     function comecar() {
-        setData({
+        setDataForm({
             layout: undefined,
-            inicialDate: undefined
+            week: undefined
         })
         return toast("Selecione o layout", {
             icon: "📐📌",
@@ -29,8 +29,8 @@ export default function useForm() {
         if (!result.success) {
             return toast.error(result.error.message)
         }
-        setData({
-            ...data,
+        setDataForm({
+            ...dataForm,
             layout: layout
         })
         toast("Selecione a semana inicial", {
@@ -42,21 +42,20 @@ export default function useForm() {
         const layoutSchema = z.number({
             message: "Selecione um layout"
         })
-        const weekInString = formData.get("semana_inicial") as string
+        const weekInString = formData.get("week") as string
         const week = parseInt(weekInString)
         const result = layoutSchema.safeParse(week)
         if (!result.success) {
             return toast.error(result.error.message)
         }
-        setData({
-            ...data,
-            inicialDate: week
+        setDataForm({
+            ...dataForm,
+            week: week
         })
-        console.log(data);
-        return 
+        
     }
     return {
-        data,
+        dataForm,
         comecar,
         inserirLayout,
         inserirWeek
