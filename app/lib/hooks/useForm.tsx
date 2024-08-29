@@ -3,21 +3,15 @@
 import { useState } from "react"
 import toast from "react-hot-toast"
 import { z } from "zod"
+import { Partes } from "../types/types"
 
 export default function useForm() {
-    const [dataForm, setDataForm] = useState<{
-        layout?: "quinzenal" | "mensal_padrao" | "mensal_especial"
-        week?: number
-    } | undefined>(undefined)
+    const [layout, setLayout] = useState<"quinzenal" | "mensal_padrao" | "mensal_especial" | undefined | null>(null)
+    const [data, setData] = useState<Partes[] | undefined>(undefined)
 
     function comecar() {
-        setDataForm({
-            layout: undefined,
-            week: undefined
-        })
-        return toast("Selecione o layout", {
-            icon: "📐📌",
-        })
+        setLayout(undefined)
+        toast("Selecione o layout", {icon: "📐📌"})
     }
 
     function inserirLayout(formData:FormData) {
@@ -26,39 +20,32 @@ export default function useForm() {
         })
         const layout = formData.get("layout") as "quinzenal" | "mensal_padrao" | "mensal_especial"
         const result = layoutSchema.safeParse(layout)
-        if (!result.success) {
-            return toast.error(result.error.message)
-        }
-        setDataForm({
-            ...dataForm,
-            layout: layout
-        })
-        toast("Selecione a semana inicial", {
-            icon: "📅",
-        })
-        return 
+        if (!result.success) return toast.error(result.error.message)
+        setLayout(layout)
+        toast("Selecione a semana inicial", {icon: "📅"})
     }
-    function inserirWeek(formData:FormData) {
-        const layoutSchema = z.number({
-            message: "Selecione um layout"
+    async function getPartes(formData:FormData) {
+        const toastId = toast.loading("Buscando dados")
+        const weekAndYearSchema = z.object({
+            dateFrom: z.string()
+        }, {
+            message: "Dados recebidos incorretos"
         })
-        const weekInString = formData.get("week") as string
-        const week = parseInt(weekInString)
-        const result = layoutSchema.safeParse(week)
-        if (!result.success) {
-            return toast.error(result.error.message)
-        }
-        setDataForm({
-            ...dataForm,
-            week: week
-        })
-        
+        const dateFrom = formData.get("dateFrom") as string
+        const resultZod = weekAndYearSchema.safeParse({dateFrom})
+        if (!resultZod.success) return toast.error(resultZod.error.message)
+        const result = await  fetch(`/api/partes?dateFrom=${dateFrom.replaceAll("/", "")}&layout=${layout === "quinzenal" ? 2 : layout === "mensal_padrao" ? 4 : 5}`)
+        const response: {partes?: Partes[], error?: {message: string} } = await result.json()
+        if (response.error) return toast.error(response.error.message, { id: toastId })
+        setData(response.partes)
+        return toast.success("Dados encontrados", { id: toastId })
     }
     return {
-        dataForm,
+        layout,
+        data,
         comecar,
         inserirLayout,
-        inserirWeek
+        getPartes
     }
     
 }

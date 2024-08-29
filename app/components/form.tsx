@@ -5,18 +5,19 @@ import useForm from "../lib/hooks/useForm"
 import SectionTitle from "./sectionTitle"
 import { Calendar } from "./calendar";
 import Instructions from "./instructions";
+import DesignationCard from "./designationCard";
 
 export default function Form() {
-    const { dataForm, comecar, inserirLayout, inserirWeek } = useForm()
+    const { layout, data, comecar, inserirLayout, getPartes } = useForm()
     return (
         <div className="flex flex-col w-full border gap-3 p-3 rounded-lg" >
-            {dataForm === undefined && (
+            {!data && layout === null && (
                 <>
                     <Instructions />
                     <button className="bg-blue-500 p-2 rounded-lg text-white shadow-lg font-bold" onClick={comecar}>Começar</button>
                 </>
             )}
-            {dataForm && !dataForm.layout && (
+            {!data && layout === undefined && (
                 <SectionTitle title="Layout">
                     <form className="flex flex-col items-center w-full gap-3" action={inserirLayout}>
                         <p>Selecione o layout que deseja:</p>
@@ -55,11 +56,11 @@ export default function Form() {
                     </form>
                 </SectionTitle>
             )}
-            {dataForm && dataForm.layout && (
+            {!data && layout && (
                 <SectionTitle title="Semana Inicial">
                     <div className="flex flex-col gap-5">
                         <p>Agora, selecione a semana em que as designações vão comecar.</p>
-                        <form className="flex flex-col items-center w-full gap-3" action={inserirWeek}>
+                        <form className="flex flex-col items-center w-full gap-3" action={getPartes}>
                             <label className="flex flex-col gap-5">
                                 <Calendar />
                             </label>
@@ -67,6 +68,13 @@ export default function Form() {
                         </form>
                     </div>
                 </SectionTitle>
+            )}
+            {data && (
+                <>
+                    {data.map((parte, i) => (
+                        <DesignationCard key={i} data={parte} />
+                    ))}
+                </>
             )}
         </div>
     )

@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+* {
+    @apply border-collapse;
+}
+
 h1 {
     @apply text-3xl;
     @apply font-bold;

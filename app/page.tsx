@@ -1,5 +1,7 @@
 import Form from "./components/form";
 
+export const dynamic = "force-dynamic"
+
 export default function Home() {
   return (
     <main className="flex flex-col items-center justify-start gap-7 w-full">

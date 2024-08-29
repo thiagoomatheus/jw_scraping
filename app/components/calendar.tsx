@@ -1,13 +1,15 @@
+"use client"
+
 import React, { useState } from "react";
 
-import { endOfWeek, getWeek, startOfWeek } from "date-fns";
+import { endOfWeek, startOfWeek } from "date-fns";
 import { DateRange, DayPicker } from "react-day-picker";
 import { ptBR } from "date-fns/locale";
 
 export function Calendar() {
+
     const [selectedWeek, setSelectedWeek] = useState<{
-        date: DateRange,
-        weekNumber: number
+        date: DateRange
     } | undefined>();
     
     return (
@@ -41,9 +43,8 @@ export function Calendar() {
                         date: {
                             from: startOfWeek(day, { weekStartsOn: 1 }),
                             to: endOfWeek(day, { weekStartsOn: 1 }),
-                        },
-                        weekNumber: getWeek(day, { weekStartsOn: 1 }),
-                    });
+                        }
+                    })
                 }}
                 footer={
                     selectedWeek ?
@@ -52,7 +53,7 @@ export function Calendar() {
                     "Selecione uma semana"
                 }
             />
-            {selectedWeek && <input type="number" className="hidden" name="week" readOnly value={selectedWeek.weekNumber} />}
+            {selectedWeek && <input type="text" className="hidden" name="dateFrom" readOnly value={selectedWeek.date.from?.toLocaleDateString()} />}
         </>
     )
 }
