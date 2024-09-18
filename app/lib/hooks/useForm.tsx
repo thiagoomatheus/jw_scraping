@@ -24,22 +24,20 @@ export default function useForm() {
         setLayout(layout)
         toast("Selecione a semana inicial", {icon: "📅"})
     }
+
     async function getPartes(formData:FormData) {
-        const toastId = toast.loading("Buscando dados")
         const weekAndYearSchema = z.object({
             dateFrom: z.string()
-        }, {
-            message: "Dados recebidos incorretos"
         })
         const dateFrom = formData.get("dateFrom") as string
         const resultZod = weekAndYearSchema.safeParse({dateFrom})
-        if (!resultZod.success) return toast.error(resultZod.error.message)
-        const result = await  fetch(`/api/partes?dateFrom=${dateFrom.replaceAll("/", "")}&layout=${layout === "quinzenal" ? 2 : layout === "mensal_padrao" ? 4 : 5}`)
+        if (!resultZod.success) return "Dados recebidos incorretos"
+        const result = await fetch(`/api/partes?dateFrom=${dateFrom.replaceAll("/", "")}&layout=${layout === "quinzenal" ? 2 : layout === "mensal_padrao" ? 4 : 5}`)
         const response: {partes?: Partes[], error?: {message: string} } = await result.json()
-        if (response.error) return toast.error(response.error.message, { id: toastId })
+        if (response.error) return response.error.message
         setData(response.partes)
-        return toast.success("Dados encontrados", { id: toastId })
     }
+    
     return {
         layout,
         data,

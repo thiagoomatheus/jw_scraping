@@ -6,6 +6,7 @@ import SectionTitle from "./sectionTitle"
 import { Calendar } from "./calendar";
 import Instructions from "./instructions";
 import DesignationCard from "./designationCard";
+import toast from "react-hot-toast";
 
 export default function Form() {
     const { layout, data, comecar, inserirLayout, getPartes } = useForm()
@@ -60,7 +61,15 @@ export default function Form() {
                 <SectionTitle title="Semana Inicial">
                     <div className="flex flex-col gap-5">
                         <p>Agora, selecione a semana em que as designações vão comecar.</p>
-                        <form className="flex flex-col items-center w-full gap-3" action={getPartes}>
+                        <form className="flex flex-col items-center w-full gap-3" action={async (formData: FormData) => {
+                            const toastLoading = toast.loading("Buscando designações...")
+                            getPartes(formData)
+                            .then(result => {
+                                if (result === undefined) return toast.success("Designações encontradas", { id: toastLoading })
+                                toast.error(result, { id: toastLoading })
+                            })
+                            
+                        }}>
                             <label className="flex flex-col gap-5">
                                 <Calendar />
                             </label>
