@@ -71,9 +71,9 @@ export async function GET(req:NextRequest) {
 
     try {
         const partes: Partes[] = []
-        let date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
+        let dateBase = new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
         for (let i = 0; i < layout; i++) {
-            date = add(date, { days: 7 * i })
+            let date = add(dateBase, { days: 7 * i })
             const year = date.getFullYear()
             partes.push(await scrapePartes(year, date))
         }
