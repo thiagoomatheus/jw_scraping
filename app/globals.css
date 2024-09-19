@@ -21,8 +21,16 @@ h3 {
     @apply font-bold;
 }
 
-p, li, a {
-    @apply text-base;
+p, li, a, td, tr, textarea {
+    font-size: 13px;
+}
+
+textarea {
+    @apply resize-none;
+    @apply border-2;
+    @apply border-dashed;
+    @apply border-teal-700;
+    @apply rounded;
 }
 
 @media screen and (min-width: 1024px) {
@@ -41,7 +49,7 @@ p, li, a {
         @apply font-bold;
     }
 
-    p, li, a {
-        @apply text-lg;
+    p, li, a, td, tr, textarea {
+        @apply text-base;
     }
 }

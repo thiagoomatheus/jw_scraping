@@ -1,4 +1,6 @@
 import { Partes } from "../lib/types/types";
+import { TdBase } from "./tdBase";
+import Textarea from "./textarea";
 export default function designationCard({data}: {
     data?: Partes
 }) {
@@ -11,84 +13,84 @@ export default function designationCard({data}: {
         timeLife.push(data!.time[3 + data!.ministerio.length + i])
     }
     return (
-        <table className="w-full border border-black">
+        <table className="w-full border border-black min-w-[750px]">
             <tbody className="flex flex-col">
-                <tr className="grid grid-rows-1 md:grid-cols-[0.2fr_0.15fr_0.2fr_0.45fr] border-b border-black">
-                    <td className="border-r border-black bg-[#d9d9d9] pl-2 font-bold">{data?.semana}</td>
-                    <td className="border-r border-black bg-[#d9d9d9] pl-2 font-bold">{data?.canticos[0]}</td>
-                    <td className="border-r border-black pl-2">Oração: Jonatã</td>
-                    <td className="pl-2">Comentários iniciais: Jorge</td>
+                <tr className="grid grid-cols-[0.2fr_0.14fr_0.25fr_0.45fr] border-b border-black">
+                    <TdBase className="border-r bg-[#d9d9d9] font-bold"><Textarea className="bg-transparent">{data?.semana}</Textarea></TdBase>
+                    <TdBase className="border-r bg-[#d9d9d9] font-bold">{data?.canticos[0]}</TdBase>
+                    <TdBase className="border-r flex items-center">Oração: <Textarea /></TdBase>
+                    <TdBase className="flex items-center">Comentários iniciais: <Textarea /></TdBase>
                 </tr>
-                <tr className="flex flex-row md:gap-[10%] border-b border-black">
-                    <td className="border-r border-black px-8 bg-teal-700 font-bold text-white">TESOUROS DA PALAVRA DE DEUS</td>
-                    <td className="border-x border-black px-4 font-bold bg-[#7d4d98] text-white">{data?.capitulos}</td>
+                <tr className="grid grid-cols-[0.4fr_0.2fr] gap-20 border-b border-black">
+                    <TdBase className="flex items-center justify-center border-r bg-teal-700 font-bold text-white">TESOUROS DA PALAVRA DE DEUS</TdBase>
+                    <TdBase className="flex items-center justify-center px-2 border-x font-bold bg-[#7d4d98] text-white">{data?.capitulos}</TdBase>
                 </tr>
-                <tr className="grid grid-cols-1 md:grid-cols-[0.1fr_0.70fr_0.2fr] border-b border-black">
-                    <td className="flex flex-col justify-center items-center border-r border-black">
+                <tr className="grid grid-cols-[0.1fr_0.65fr_0.25fr] border-b border-black">
+                    <TdBase className="flex flex-col justify-center items-center border-r">
                         <p>{data?.time[0]}</p>
                         <p>{data?.time[1]}</p>
                         <p>{data?.time[2]}</p>
-                    </td>
-                    <td className="flex flex-col justify-center items-start pl-2 border-r border-black">
+                    </TdBase>
+                    <TdBase className="flex flex-col justify-center items-start border-r">
                         <p>{data?.tesouros}</p>
                         <p>2. Jóias Espirituais</p>
                         <p>3. Leitura da Bíblia - {data?.leitura}</p>
-                    </td>
-                    <td className="flex flex-col justify-center items-start pl-2">
-                        <p>- Participante 1</p>
-                        <p>- Participante 2</p>
-                        <p>- Participante 3</p>
-                    </td>
+                    </TdBase>
+                    <TdBase className="flex flex-col justify-center items-start">
+                        <p className="flex items-center">-<Textarea /></p>
+                        <p className="flex items-center">-<Textarea /></p>
+                        <p className="flex items-center">-<Textarea /></p>
+                    </TdBase>
                 </tr>
-                <tr className="flex flex-row border-b border-black">
-                    <td className="border-r border-black px-8 bg-yellow-600 font-bold text-white">FAÇA SEU MELHOR NO MINISTÉRIO</td>
+                <tr className="grid grid-cols-[0.4fr_0.6fr] gap-20 border-b border-black">
+                    <TdBase className="flex items-center justify-center border-r bg-yellow-600 font-bold text-white">FAÇA SEU MELHOR NO MINISTÉRIO</TdBase>
                 </tr>
-                <tr className="grid grid-cols-1 md:grid-cols-[0.1fr_0.70fr_0.2fr] border-b border-black">
-                    <td className="flex flex-col justify-center items-center border-r border-black">
+                <tr className="grid grid-cols-[0.1fr_0.65fr_0.25fr] border-b border-black">
+                    <TdBase className="flex flex-col justify-center items-center border-r">
                         {timeMinistery.map((item, index) => (
                             <p key={index}>{item}</p>
                         ))}
-                    </td>
-                    <td className="flex flex-col justify-center items-start pl-2 border-r border-black">
+                    </TdBase>
+                    <TdBase className="flex flex-col justify-center items-start border-r border-black">
                         {data?.ministerio.map((parte, i) => (
                             <p key={i}>{parte}</p>
                         ))}
-                    </td>
-                    <td className="flex flex-col justify-center items-start pl-2">
-                        {timeMinistery.map((item, index) => (
-                            <p key={index}>{item}</p>
+                    </TdBase>
+                    <TdBase className="flex flex-col justify-center items-start">
+                        {timeMinistery.map((_, index) => (
+                            <p key={`participante-${index}`}className="flex items-center">-<Textarea /></p>
                         ))}
-                    </td>
+                    </TdBase>
                 </tr>
-                <tr className="flex flex-row gap-[25%] border-b border-black">
-                    <td className="border-r border-black px-8 bg-red-800 font-bold text-white">NOSSA VIDA CRISTÃ</td>
-                    <td className="bg-[#d9d9d9] px-2 font-bold border-x border-black">{data?.canticos[1]}</td>
+                <tr className="grid grid-cols-[0.4fr_0.18fr] gap-52 border-b border-black">
+                    <TdBase className="flex items-center justify-center border-r bg-red-800 font-bold text-white">NOSSA VIDA CRISTÃ</TdBase>
+                    <TdBase className="bg-[#d9d9d9] font-bold border-x">{data?.canticos[1]}</TdBase>
                 </tr>
-                <tr className="grid grid-cols-1 md:grid-cols-[0.1fr_0.70fr_0.2fr] border-b border-black">
-                    <td className="flex flex-col justify-center items-center border-r border-black">
+                <tr className="grid grid-cols-[0.1fr_0.65fr_0.25fr] border-b border-black">
+                    <TdBase className="flex flex-col justify-center items-center border-r">
                         {timeLife.map((item, index) => (
                             <p key={index}>{item}</p>
                         ))}
-                    </td>
-                    <td className="flex flex-col justify-center items-start pl-2 border-r border-black">
+                    </TdBase>
+                    <TdBase className="flex flex-col justify-center items-start border-r">
                         {data?.vida.map((parte, i) => (
                             <p key={i}>{parte}</p>
                         ))}
-                    </td>
-                    <td className="flex flex-col justify-center items-start pl-2">
-                        {timeLife.map((item, index) => (
-                            <p key={index}>{item}</p>
+                    </TdBase>
+                    <TdBase className="flex flex-col justify-center items-start">
+                        {timeLife.map((_, index) => (
+                            <p key={`participante-${index}`}className="flex items-center">-<Textarea /></p>
                         ))}
-                    </td>
+                    </TdBase>
                 </tr>
-                <tr className="grid grid-rows-1 grid-cols-[0.15fr_0.2fr] justify-end border-b border-black">
-                    <td className="border-x border-black pl-2">Leitor:</td>
-                    <td className="pl-2">Participante</td>
+                <tr className="grid grid-cols-[0.149fr_0.251fr] justify-end border-b border-black">
+                    <TdBase className="border-x">Leitor:</TdBase>
+                    <TdBase>-<Textarea /></TdBase>
                 </tr>
-                <tr className="grid grid-rows-1 grid-cols-[0.65fr_0.15fr_0.2fr] justify-start border-black">
-                    <td className="pl-2 border-black">Recapitulação da Reunião e visão geral da próxima semana</td>
-                    <td className="pl-2 border-x border-black">{data?.canticos[2]}</td>
-                    <td className="pl-2">Oração Final: Darci</td>
+                <tr className="grid grid-rows-1 grid-cols-[0.6fr_0.15fr_0.251fr] justify-start border-black">
+                    <TdBase>Recapitulação e visão geral da próxima semana</TdBase>
+                    <TdBase className="bg-[#d9d9d9] font-bold border-x">{data?.canticos[2]}</TdBase>
+                    <TdBase className="flex items-center">Oração: <Textarea /></TdBase>
                 </tr>
             </tbody>
         </table>

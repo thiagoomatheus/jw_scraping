@@ -62,13 +62,12 @@ export default function Form() {
                     <div className="flex flex-col gap-5">
                         <p>Agora, selecione a semana em que as designações vão comecar.</p>
                         <form className="flex flex-col items-center w-full gap-3" action={async (formData: FormData) => {
-                            const toastLoading = toast.loading("Buscando designações...")
+                            const toastLoading = toast.loading("Buscando partes na apostila...")
                             getPartes(formData)
                             .then(result => {
-                                if (result === undefined) return toast.success("Designações encontradas", { id: toastLoading })
+                                if (result === undefined) return toast.success("Dados encontrados", { id: toastLoading })
                                 toast.error(result, { id: toastLoading })
-                            })
-                            
+                            }) 
                         }}>
                             <label className="flex flex-col gap-5">
                                 <Calendar />
@@ -79,11 +78,21 @@ export default function Form() {
                 </SectionTitle>
             )}
             {data && (
-                <>
-                    {data.map((parte, i) => (
-                        <DesignationCard key={i} data={parte} />
-                    ))}
-                </>
+                <SectionTitle classname="md:flex-col" title="Participantes">
+                    <p>Muito bom! Nós já temos todas as partes das semanas selecionadas e é nesse momento que você entra em ação.</p>
+                    <p> Veja que temos campos digitáveis para cada parte, assim, você poderá digitar o nome dos participantes. Os campos digitáveis estão indicados com uma borda pontilhada como o exemplo abaixo 👇👇</p>
+                    <div className="border-2 border-dashed w-52 h-7 rounded border-teal-700" />
+                    <p>Caso esteja num dispositivo com tela menor você terá de rolar para a direita a fim de escontrar os campos digitáveis das partes. Para voltar, basta rolar para a esquerda.</p>
+                    <div className="md:hidden flex justify-between">
+                        <p>👈👈👈</p>
+                        <p>👉👉👉</p>
+                    </div>
+                    <div className="flex flex-col gap-5 overflow-auto pb-3 md:pb-0">
+                        {data.map((parte, i) => (
+                            <DesignationCard key={i} data={parte} />
+                        ))}
+                    </div>
+                </SectionTitle>
             )}
         </div>
     )
