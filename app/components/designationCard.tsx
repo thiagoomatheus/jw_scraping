@@ -16,7 +16,7 @@ export default function designationCard({data}: {
         <table className="w-full border border-black min-w-[750px]">
             <tbody className="flex flex-col">
                 <tr className="grid grid-cols-[0.2fr_0.14fr_0.25fr_0.45fr] border-b border-black">
-                    <TdBase className="border-r bg-[#d9d9d9] font-bold"><Textarea className="bg-transparent">{data?.semana}</Textarea></TdBase>
+                    <TdBase className="border-r bg-[#d9d9d9] font-bold"><Textarea defaultValue={data?.semana} className="bg-transparent"></Textarea></TdBase>
                     <TdBase className="border-r bg-[#d9d9d9] font-bold">{data?.canticos[0]}</TdBase>
                     <TdBase className="border-r flex items-center">Oração: <Textarea /></TdBase>
                     <TdBase className="flex items-center">Comentários iniciais: <Textarea /></TdBase>
