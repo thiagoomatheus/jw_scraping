@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,4 +5,56 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model Usuario {
+  id String @id
+  email String @unique
+  name String
+  cong Int
+
+  @@map("usuarios")
+}
+
+model Semana {
+  id String @id @default(uuid())
+  semana String @unique
+  diaReuniao String @map("dia_reuniao")
+  canticoInicial String @map("cantico_inicial")
+  canticoMeio String @map("cantico_meio")
+  canticoFinal String @map("cantico_final")
+  capitulos String
+  partes Parte[]
+  designacao Designacao[]
+
+  @@map("semana")
+}
+
+model Parte {
+  id String @id @default(uuid())
+  semana String @map("semana")
+  semanaReference Semana @relation(fields: [semana], references: [semana], onDelete: Cascade, onUpdate: Cascade)
+  secao Secao?
+  nome String
+  tempo String?
+  designacao Designacao?
+
+  @@map("partes")
+}
+
+model Designacao {
+  id String @id @default(uuid())
+  semana String @map("semana")
+  semanaReference Semana @relation(fields: [semana], references: [semana], onDelete: Cascade, onUpdate: Cascade)
+  parte String @unique
+  parteId Parte? @relation(fields: [parte], references: [id])
+  participante String
+
+  @@map("designacoes")
+}
+
+enum Secao {
+  tesouros
+  ministerio
+  vida
 }

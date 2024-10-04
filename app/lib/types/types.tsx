@@ -1,10 +1,31 @@
 export type Partes = {
-    semana: string
-    canticos: string[]
-    capitulos: string
-    tesouros: string
-    leitura: string
-    ministerio: string[]
-    vida: string[]
-    time: string[]
+  id?: string
+  semana: string
+  canticos: string[]
+  capitulos: string
+  diaReuniao: string
+  outros: {
+    id?: string
+    nome: string
+    tempo?: string
+    participante?: string
+  }[]
+  tesouros: {
+    id?: string
+    nome: string
+    tempo?: string
+    participante?: string
+  }[]
+  ministerio: {
+    id?: string
+    nome: string
+    tempo?: string
+    participante?: string
+  }[]
+  vida: {
+    id?: string
+    nome: string
+    tempo?: string
+    participante?: string
+  }[]
 }

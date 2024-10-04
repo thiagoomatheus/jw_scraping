@@ -7,7 +7,7 @@ import { Partes } from "../types/types"
 
 export default function useForm() {
     const [layout, setLayout] = useState<"quinzenal" | "mensal_padrao" | "mensal_especial" | undefined | null>(null)
-    const [data, setData] = useState<Partes[] | undefined>(undefined)
+    const [data, setData] = useState<Partes[] | undefined>()
 
     function comecar() {
         setLayout(undefined)

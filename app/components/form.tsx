@@ -1,5 +1,6 @@
 "use client"
 
+import React from "react";
 import "react-day-picker/style.css";
 import useForm from "../lib/hooks/useForm"
 import SectionTitle from "./sectionTitle"
@@ -88,8 +89,8 @@ export default function Form() {
                         <p>👉👉👉</p>
                     </div>
                     <div className="flex flex-col gap-5 overflow-auto pb-3 md:pb-0">
-                        {data.map((parte, i) => (
-                            <DesignationCard key={i} data={parte} />
+                        {data.map((parte) => (
+                            <DesignationCard key={parte.semana} data={parte} />
                         ))}
                     </div>
                 </SectionTitle>
