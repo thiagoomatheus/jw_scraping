@@ -3,10 +3,6 @@ FROM node:18-alpine AS base
 # Step 1. Rebuild the source code only when needed
 FROM base AS builder
 
-RUN npm --version
-RUN npm install npm@latest --save-dev
-RUN npm --version
-
 WORKDIR /app
 
 # Install dependencies based on the preferred package manager
