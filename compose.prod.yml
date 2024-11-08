@@ -20,7 +20,7 @@ services:
     image: atendai/evolution-api:v1.0.7
     restart: always
     environment:
-      - CORS_ORIGIN=*
+      - CORS_ORIGIN=${CORS_ORIGIN}
       - CORS_METHODS=${CORS_METHODS}
       - CORS_CREDENTIALS=${CORS_CREDENTIALS}
       - CONFIG_SESSION_PHONE_CLIENT=${CONFIG_SESSION_PHONE_CLIENT}
