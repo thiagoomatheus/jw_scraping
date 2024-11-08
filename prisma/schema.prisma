@@ -8,53 +8,76 @@ datasource db {
 }
 
 model Usuario {
-  id String @id
-  email String @unique
-  name String
-  cong Int
+  id                String       @id @default(uuid())
+  email             String       @unique
+  cong              Int?
+  funcao            Funcao?
+  instanciaWhatsApp String?
+  nome              String
+  designacoes       Designacao[]
 
   @@map("usuarios")
 }
 
 model Semana {
-  id String @id @default(uuid())
-  semana String @unique
-  diaReuniao String @map("dia_reuniao")
-  canticoInicial String @map("cantico_inicial")
-  canticoMeio String @map("cantico_meio")
-  canticoFinal String @map("cantico_final")
-  capitulos String
-  partes Parte[]
-  designacao Designacao[]
+  id             String       @id @default(uuid())
+  diaReuniao     String       @map("dia_reuniao")
+  canticoInicial String       @map("cantico_inicial")
+  canticoMeio    String       @map("cantico_meio")
+  canticoFinal   String       @map("cantico_final")
+  capitulos      String
+  semana         String       @unique
+  designacao     Designacao[]
+  partes         Parte[]
 
   @@map("semana")
 }
 
 model Parte {
-  id String @id @default(uuid())
-  semana String @map("semana")
-  semanaReference Semana @relation(fields: [semana], references: [semana], onDelete: Cascade, onUpdate: Cascade)
-  secao Secao?
-  nome String
-  tempo String?
-  designacao Designacao?
+  id              String       @id @default(uuid())
+  semana          String       @map("semana")
+  secao           Secao?
+  nome            String
+  tempo           String?
+  designacao      Designacao[]
+  semanaReference Semana       @relation(fields: [semana], references: [semana], onDelete: Cascade)
 
   @@map("partes")
 }
 
 model Designacao {
-  id String @id @default(uuid())
-  semana String @map("semana")
-  semanaReference Semana @relation(fields: [semana], references: [semana], onDelete: Cascade, onUpdate: Cascade)
-  parte String @unique
-  parteId Parte? @relation(fields: [parte], references: [id])
-  participante String
+  id               String  @id @default(uuid())
+  semana           String
+  parte            String
+  participante     String
+  cong             Int
+  criadoPor        String
+  telefone         String?
+  usuarioReference Usuario @relation(fields: [criadoPor], references: [id], onDelete: Cascade)
+  parteReference   Parte   @relation(fields: [parte], references: [id], onDelete: Cascade)
+  semanaReference  Semana  @relation(fields: [semana], references: [semana], onDelete: Cascade)
 
   @@map("designacoes")
+}
+
+model Feedback {
+  id    String @id @default(uuid())
+  nome  String
+  email String
+  tipo  String
+  sobre String
+  texto String
+
+  @@map("feedbacks")
 }
 
 enum Secao {
   tesouros
   ministerio
   vida
+}
+
+enum Funcao {
+  participar
+  designar
 }
