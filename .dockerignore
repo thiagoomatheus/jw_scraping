@@ -1,0 +1,10 @@
+**/node_modules
+.dockerignore
+npm-debug.log
+README.md
+.next
+**/.next
+.git
+LICENSE
+**/dev.Dockerfile
+**/prod.Dockerfile
