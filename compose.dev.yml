@@ -1,0 +1,61 @@
+version: '3.7'
+
+services:
+  next-app:
+    container_name: next-app
+    build:
+      context: ./
+      dockerfile: ./app/dev.Dockerfile
+    # Set environment variables based on the .env file
+    env_file:
+      - .env
+    volumes:
+      - nextjs_cache:/app/.next
+      - .:/app
+      - prisma_volume:/app/node_modules/@prisma
+    command: npm run dev
+    environment:
+      - NODE_ENV=development
+    ports:
+      - 3000:3000
+    depends_on:
+      - db
+
+  # Add more containers below (nginx, postgres, etc.)
+
+  db:
+    container_name: postgres
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+
+  evolution-api:
+    container_name: evolution_api
+    image: atendai/evolution-api:v1.0.7
+    restart: always
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    volumes:
+      - evolution_store:/evolution/store
+      - evolution_instances:/evolution/instances
+
+# Define a network, which allows containers to communicate
+# with each other, by using their container name as a hostname
+networks:
+  my_network:
+    external: true
+
+volumes:
+  nextjs_cache:
+  postgres:
+  evolution_store:
+  evolution_instances:
+  prisma_volume:
