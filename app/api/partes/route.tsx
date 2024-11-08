@@ -1,11 +1,16 @@
-import { prisma } from "@/app/lib/prisma/prisma"
-import { Partes } from "@/app/lib/types/types"
+"use server"
+
+import { auth } from "@/app/lib/auth/auth"
 import axios from "axios"
 import * as cheerio from "cheerio"
 import { add, format, getWeek } from "date-fns"
 import { ptBR } from "date-fns/locale"
+import { redirect } from "next/navigation"
 import { NextRequest, NextResponse } from "next/server"
 import { z } from "zod"
+import { Partes } from "@/app/lib/types/types"
+import { prisma } from "@/app/lib/prisma/prisma"
+import { Parte, Semana } from "@prisma/client"
 
 async function getPartes(year: number, week: number, layout: number) {
     const semanas: string[] = []
@@ -35,7 +40,7 @@ async function getPartes(year: number, week: number, layout: number) {
 
     const partes: Partes[] = []
 
-    semanaDb.map((semana) => {
+    semanaDb.map((semana: Semana & { partes: Parte[] }) => {
         partes.push({
             id: semana.id,
             semana: semana.semana,
@@ -113,7 +118,7 @@ async function scrapePartes(ano: number, numeroSemana: number, diaReuniao: strin
         })
     })
 
-    $("h3.du-color--maroon-600").each(function () {
+    $("h3.du-color--maroon-600:contains(.)").each(function () {
         const vida = $(this).text()
         partes.vida.push({
             nome: vida.length > 62 ? `${vida.slice(0, 62)}...` : vida,
@@ -288,6 +293,15 @@ export async function GET(req:NextRequest) {
 }
 
 export async function POST(req:NextRequest) {
+
+    const sessao = await auth()
+
+    if (!sessao || !sessao.user ) return redirect("/login")
+
+    const usuario = await prisma.usuario.findUnique({ where: { email: sessao.user.email! } })
+
+    if (!usuario) return redirect("/login")
+
     const partes: Partes = await req.json()
 
     const designacoesSchema = z.object({
@@ -325,20 +339,34 @@ export async function POST(req:NextRequest) {
 
     if (!resultZod.success) {
         console.log(resultZod.error)
-        return NextResponse.json({}, { status: 500 })
+        return NextResponse.json({error: resultZod.error}, { status: 500 })
     }
+
+    const temDesignacao = await prisma.designacao.findFirst({
+        where: {
+            semana: resultZod.data.semana,
+            criadoPor: usuario.id
+        }
+    })
+
+    if (temDesignacao) return NextResponse.json({ error: "Ja existe uma designação para esta semana" }, { status: 401 })
     
     const designacoes: {
-        semana: string,
-        parte: string,
+        semana: string
+        parte: string
         participante: string
-    }[] = []
+        criadoPor: string
+        cong: number
+    }[] = [
+    ]
 
     partes.outros.map(parte => {
         designacoes.push({
             semana: partes.semana,
             participante: parte.participante!,
-            parte: parte.id!
+            parte: parte.id!,
+            criadoPor: usuario.id!,
+            cong: usuario.cong!
         })
     })
 
@@ -346,7 +374,9 @@ export async function POST(req:NextRequest) {
         designacoes.push({
             semana: partes.semana,
             participante: parte.participante!,
-            parte: parte.id!
+            parte: parte.id!,
+            criadoPor: usuario.id!,
+            cong: usuario.cong!
         })
     })
 
@@ -354,7 +384,9 @@ export async function POST(req:NextRequest) {
         designacoes.push({
             semana: partes.semana,
             participante: parte.participante!,
-            parte: parte.id!
+            parte: parte.id!,
+            criadoPor: usuario.id!,
+            cong: usuario.cong!
         })
     })
 
@@ -362,13 +394,15 @@ export async function POST(req:NextRequest) {
         designacoes.push({
             semana: partes.semana,
             participante: parte.participante!,
-            parte: parte.id!
+            parte: parte.id!,
+            criadoPor: usuario.id!,
+            cong: usuario.cong!
         })
     })
 
-    const data = await prisma.designacao.createMany({
+    await prisma.designacao.createManyAndReturn({
         data: designacoes
     })
-    
+
     return NextResponse.json({}, { status: 200 })
 }
