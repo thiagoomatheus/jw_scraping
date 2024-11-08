@@ -6,23 +6,70 @@
     @apply border-collapse;
 }
 
+body {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust:exact !important;
+}
+
 h1 {
-    @apply text-3xl;
+    @apply text-4xl;
     @apply font-bold;
+    @apply text-black;
+    @apply dark:text-white;
+    @apply font-black;
 }
 
 h2 {
     @apply text-2xl;
     @apply font-bold;
+    @apply text-black;
+    @apply dark:text-white;
+    @apply font-black;
 }
 
 h3 {
     @apply text-xl;
     @apply font-bold;
+    @apply text-black;
+    @apply dark:text-white;
+    @apply font-black;
 }
 
-p, li, a, td, tr, textarea {
+p, li, a, td, tr, textarea, select, option, label, li, legend {
     font-size: 13px;
+    @apply text-black;
+    @apply dark:text-white;
+}
+
+select, option {
+    @apply bg-white;
+    @apply dark:bg-gray-900
+}
+
+button {
+    @apply text-sm;
+    @apply text-black;
+    @apply dark:text-white;
+}
+
+input[type=text], input[type=tel], input[type=number], select {
+    @apply bg-gray-200;
+    @apply dark:bg-gray-700;
+    @apply rounded-lg;
+    @apply p-2;
+    @apply border;
+    @apply border-black;
+    @apply dark:border-white;
+}
+
+input[type=number] {
+    appearance: none;
+}
+
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
 }
 
 textarea {
@@ -30,26 +77,113 @@ textarea {
     @apply border-2;
     @apply border-dashed;
     @apply border-teal-700;
+    @apply dark:border-teal-500;
     @apply rounded;
+    @apply bg-white;
+    @apply dark:bg-gray-900;
+}
+
+tr, td, table, tbody {
+    @apply border-gray-900;
+    @apply dark:border-white
+}
+
+.neumorphism {
+    box-shadow: 0px 0px 13px #b2b8c9, -0px -0px 13px #f0f8ff;
+    -webkit-box-shadow: 0px 0px 13px #b2b8c9, -0px -0px 13px #f0f8ff;
+}
+
+.gradient-txt {
+    @apply bg-gradient-to-l;
+    @apply from-gray-700;
+    @apply dark:from-white;
+    @apply to-blue-400;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    background-size: 300% !important;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: animated_text 10s ease-in-out infinite;
+    -moz-animation: animated_text 10s ease-in-out infinite;
+    -webkit-animation: animated_text 10s ease-in-out infinite;
+}
+
+.modal select, .modal input {
+    @apply bg-white;
+    @apply dark:bg-gray-700;
+}
+
+@media print {
+
+    body * {
+        visibility: hidden;
+    }
+
+    .impressao, .impressao * {
+        visibility: visible;
+        print-color-adjust: exact;
+    }
+
+    .impressao {
+        position: absolute;
+        border: none;
+        width: 100%;
+        left: 0;
+        top: 0;
+    }
+
+    .impressao h1 {
+        @apply text-[20pt];
+        @apply text-white;
+        @apply bg-blue-500;
+    }
+
+    .impressao table, .impressao tr, .impressao td, .impressao p {
+        @apply border-black;
+        @apply text-[9pt];
+    }
+
+    .impressao td {
+        @apply h-4;
+
+    }
+
+    .impressao textarea {
+        @apply border-none
+    }
 }
 
 @media screen and (min-width: 1024px) {
     h1 {
-        @apply text-5xl;
+        @apply text-6xl;
         @apply font-bold;
+        @apply font-black;
     }
     
     h2 {
-        @apply text-4xl;
+        @apply text-5xl;
         @apply font-bold;
+        @apply font-black;
     }
     
     h3 {
-        @apply text-2xl;
+        @apply text-3xl;
         @apply font-bold;
+        @apply font-black;
     }
 
-    p, li, a, td, tr, textarea {
+    p, li, a, td, tr, textarea, select, option, label, li, legend {
         @apply text-base;
     }
+
+    button {
+        @apply text-lg
+    }
 }
+
+@keyframes animated_text {
+    0% { background-position: 0px 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0px 50%; }
+} 

@@ -1,14 +1,14 @@
-import Form from "./components/form";
+import Apresentacao from "./componentes/apresentacao";
+import Instrucoes from "./componentes/instrucoes";
 
 export const dynamic = "force-dynamic"
 
-export default function Home() {
+export default async function Home() {
+
   return (
-    <main className="flex flex-col items-center justify-start gap-7 w-full">
-      <h1>Designações</h1>
-      <section className="flex flex-col w-full max-w-5xl">
-        <Form />
-      </section>
-    </main>
+    <section className="flex flex-col items-center justify-center gap-12 md:gap-24 max-w-7xl">
+      <Apresentacao />
+      <Instrucoes />
+    </section>
   );
 }
