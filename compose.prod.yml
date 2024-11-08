@@ -20,6 +20,8 @@ services:
     volumes:
       - evolution_instances:/evolution/instances
       - evolution_store:/evolution/store
+    networks:
+      - coolify
 
   next-app:
     container_name: next-app-prod
@@ -45,12 +47,8 @@ services:
       - 3000:3000
     depends_on:
       - evolution-api
-
-# Define a network, which allows containers to communicate
-# with each other, by using their container name as a hostname
-networks:
-  my_network:
-    external: true
+    networks:
+      - coolify
 
 volumes:
   nextjs_cache:
