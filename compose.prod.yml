@@ -44,7 +44,6 @@ services:
     ports:
       - 3000:3000
     depends_on:
-      - db
       - evolution-api
 
 # Define a network, which allows containers to communicate
@@ -55,7 +54,6 @@ networks:
 
 volumes:
   nextjs_cache:
-  postgres:
   evolution_store:
   evolution_instances:
   prisma_volume:
