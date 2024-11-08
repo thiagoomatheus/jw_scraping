@@ -6,7 +6,7 @@ import { z } from "zod"
 import { Partes } from "../types/types"
 
 export default function useForm() {
-    const [layout, setLayout] = useState<"quinzenal" | "mensal_padrao" | "mensal_especial" | undefined | null>(null)
+    const [layout, setLayout] = useState<"unico" | "quinzenal" | "mensal_padrao" | undefined | null>(null)
     const [data, setData] = useState<Partes[] | undefined>()
 
     function comecar() {
@@ -15,10 +15,10 @@ export default function useForm() {
     }
 
     function inserirLayout(formData:FormData) {
-        const layoutSchema = z.string().refine((value) => value === "quinzenal" || value === "mensal_padrao" || value === "mensal_especial", {
+        const layoutSchema = z.string().refine((value) => value === "unico" ||value === "quinzenal" || value === "mensal_padrao", {
             message: "Selecione um layout"
         })
-        const layout = formData.get("layout") as "quinzenal" | "mensal_padrao" | "mensal_especial"
+        const layout = formData.get("layout") as "unico" | "quinzenal" | "mensal_padrao"
         const result = layoutSchema.safeParse(layout)
         if (!result.success) return toast.error(result.error.message)
         setLayout(layout)
@@ -32,7 +32,7 @@ export default function useForm() {
         const dateFrom = formData.get("dateFrom") as string
         const resultZod = weekAndYearSchema.safeParse({dateFrom})
         if (!resultZod.success) return "Dados recebidos incorretos"
-        const result = await fetch(`/api/partes?dateFrom=${dateFrom.replaceAll("/", "")}&layout=${layout === "quinzenal" ? 2 : layout === "mensal_padrao" ? 4 : 5}`)
+        const result = await fetch(`/api/partes?dateFrom=${dateFrom.replaceAll("/", "")}&layout=${layout === "quinzenal" ? 2 : layout === "mensal_padrao" ? 4 : 1}`)
         const response: {partes?: Partes[], error?: {message: string} } = await result.json()
         if (response.error) return response.error.message
         setData(response.partes)
