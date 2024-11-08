@@ -10,11 +10,7 @@ COPY package.json package-lock.json* ./
 # Omit --production flag for TypeScript devDependencies
 RUN npm ci
 
-COPY app ./app
-COPY public ./public
-COPY next.config.mjs .
-COPY tsconfig.json .
-COPY prisma ./prisma/
+COPY . .
 RUN npx prisma generate
 
 # Environment variables must be present at build time
