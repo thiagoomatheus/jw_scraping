@@ -26,7 +26,7 @@ export async function notificarParticipante(designacao: (Designacao & { parteRef
         message: "Instância do WhatsApp não foi criada. Navegue até a seção minha conta para criar uma."
     }}
 
-    const resStatusIntanciaWhatsApp = await fetch(`http://evolution-api:8080/instance/connectionState/${usuario.instanciaWhatsApp}`, {
+    const resStatusIntanciaWhatsApp = await fetch(`${process.env.EVOLUTION_API_URL}/instance/connectionState/${usuario.instanciaWhatsApp}`, {
         headers: {
             "Content-Type": "application/json",
             "apiKey": process.env.AUTHENTICATION_API_KEY!
@@ -74,7 +74,7 @@ export async function notificarParticipante(designacao: (Designacao & { parteRef
         })
     }
 
-    const resNotificarParticipante = await fetch(`http://evolution-api:8080/message/sendText/${usuario.instanciaWhatsApp}`, {
+    const resNotificarParticipante = await fetch(`${process.env.EVOLUTION_API_URL}/message/sendText/${usuario.instanciaWhatsApp}`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",

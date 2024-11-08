@@ -22,7 +22,7 @@ export default async function Page() {
 
     if (!usuario) return redirect("/login")
 
-    const statusIntanciaWhatsApp: "open" | "closed" | undefined = await fetch(`http://evolution-api:8080/instance/connectionState/${usuario.instanciaWhatsApp}`, {
+    const statusIntanciaWhatsApp: "open" | "closed" | undefined = await fetch(`${process.env.EVOLUTION_API_URL}/instance/connectionState/${usuario.instanciaWhatsApp}`, {
         headers: {
             "Content-Type": "application/json",
             "apiKey": process.env.AUTHENTICATION_API_KEY!

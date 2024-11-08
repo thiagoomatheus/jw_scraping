@@ -74,6 +74,8 @@ COPY --from=builder --chown=nextjs:nodejs /app/node_modules/.prisma ./node_modul
 COPY --from=builder --chown=nextjs:nodejs /app/node_modules/@prisma ./node_modules/@prisma
 
 # Environment variables must be redefined at run time
+ARG EVOLUTION_API_URL
+ENV EVOLUTION_API_URL=${EVOLUTION_API_URL}
 ARG DATABASE_URL
 ENV DATABASE_URL=${DATABASE_URL}
 ARG POSRGRES_USER

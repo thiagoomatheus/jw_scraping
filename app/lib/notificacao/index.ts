@@ -40,7 +40,7 @@ async function enviarNotificacaoAgendada() {
             }
         })
     
-        const resStatusIntanciaWhatsApp = await fetch(`http://evolution-api:8080/instance/connectionState/${usuario.instanciaWhatsApp}`, {
+        const resStatusIntanciaWhatsApp = await fetch(`${process.env.EVOLUTION_API_URL}/instance/connectionState/${usuario.instanciaWhatsApp}`, {
             headers: {
                 "Content-Type": "application/json",
                 "apiKey": process.env.AUTHENTICATION_API_KEY!
@@ -63,7 +63,7 @@ async function enviarNotificacaoAgendada() {
             message: "A instância do WhatsApp não está aberta. Verifique sua instância na seção Minha Conta."
         }});
     
-        const resNotificarParticipante = await fetch(`http://evolution-api:8080/message/sendText/${usuario.instanciaWhatsApp}`, {
+        const resNotificarParticipante = await fetch(`${process.env.EVOLUTION_API_URL}/message/sendText/${usuario.instanciaWhatsApp}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

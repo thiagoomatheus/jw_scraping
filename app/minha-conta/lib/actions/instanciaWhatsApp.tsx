@@ -36,7 +36,7 @@ type ResponseLogout = {
 
 export async function criarInstanciaWhatsApp (emailUsuario: string): Promise<ResponseCreate> {
 
-    const result = await fetch(`http://evolution-api:8080/instance/create`, {
+    const result = await fetch(`${process.env.EVOLUTION_API_URL}/instance/create`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -83,7 +83,7 @@ export async function criarInstanciaWhatsApp (emailUsuario: string): Promise<Res
 
 export async function conectarWhatsApp(instancia: string): Promise<ResponseConnect> {
      
-    const result = await fetch(`http://evolution-api:8080/instance/connect/${instancia}`, {
+    const result = await fetch(`${process.env.EVOLUTION_API_URL}/instance/connect/${instancia}`, {
         headers: {
             "Content-Type": "application/json",
             "apiKey": process.env.AUTHENTICATION_API_KEY!
@@ -107,7 +107,7 @@ export async function conectarWhatsApp(instancia: string): Promise<ResponseConne
 
 export async function desconectarWhatsApp (instancia: string): Promise<ResponseLogout> {
 
-    const result = await fetch(`http://evolution-api:8080/instance/logout/${instancia}`, {
+    const result = await fetch(`${process.env.EVOLUTION_API_URL}/instance/logout/${instancia}`, {
         method: "DELETE",
         headers: {
             "Content-Type": "application/json",
@@ -131,7 +131,7 @@ export async function desconectarWhatsApp (instancia: string): Promise<ResponseL
 
 export async function verificarConexao (instancia: string) {
 
-    const result = await fetch(`http://evolution-api:8080/instance/connectionState/${instancia}`, {
+    const result = await fetch(`${process.env.EVOLUTION_API_URL}/instance/connectionState/${instancia}`, {
         headers: {
             "Content-Type": "application/json",
             "apiKey": process.env.AUTHENTICATION_API_KEY!
