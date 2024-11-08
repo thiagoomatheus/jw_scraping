@@ -6,7 +6,7 @@ FROM base AS builder
 WORKDIR /app
 
 # Install dependencies based on the preferred package manager
-COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
+COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* .npmrc* ./
 # Omit --production flag for TypeScript devDependencies
 RUN \
   if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
@@ -16,17 +16,25 @@ RUN \
   else echo "Warning: Lockfile not found. It is recommended to commit lockfiles to version control." && yarn install; \
   fi
 
-COPY src ./src
+COPY app ./app
 COPY public ./public
-COPY next.config.js .
+COPY next.config.mjs .
 COPY tsconfig.json .
+COPY prisma ./prisma/
+RUN npx prisma generate
 
 # Environment variables must be present at build time
 # https://github.com/vercel/next.js/discussions/14030
-ARG ENV_VARIABLE
-ENV ENV_VARIABLE=${ENV_VARIABLE}
-ARG NEXT_PUBLIC_ENV_VARIABLE
-ENV NEXT_PUBLIC_ENV_VARIABLE=${NEXT_PUBLIC_ENV_VARIABLE}
+ARG DATABASE_URL
+ENV DATABASE_URL=${DATABASE_URL}
+ARG AUTH_SECRET
+ENV AUTH_SECRET=${AUTH_SECRET}
+ARG AUTH_GOOGLE_ID
+ENV AUTH_GOOGLE_ID=${AUTH_GOOGLE_ID}
+ARG AUTH_GOOGLE_SECRET
+ENV AUTH_GOOGLE_SECRET=${AUTH_GOOGLE_SECRET}
+ARG AUTHENTICATION_API_KEY
+ENV AUTHENTICATION_API_KEY=${AUTHENTICATION_API_KEY}
 
 # Next.js collects completely anonymous telemetry data about general usage. Learn more here: https://nextjs.org/telemetry
 # Uncomment the following line to disable telemetry at build time
@@ -45,7 +53,9 @@ RUN \
 # Step 2. Production image, copy all the files and run next
 FROM base AS runner
 
-WORKDIR /app
+WORKDIR /app_prod
+
+ENV NODE_ENV=production
 
 # Don't run production as root
 RUN addgroup --system --gid 1001 nodejs
@@ -59,15 +69,29 @@ COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
+COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules/@prisma ./node_modules/@prisma
+
 # Environment variables must be redefined at run time
-ARG ENV_VARIABLE
-ENV ENV_VARIABLE=${ENV_VARIABLE}
-ARG NEXT_PUBLIC_ENV_VARIABLE
-ENV NEXT_PUBLIC_ENV_VARIABLE=${NEXT_PUBLIC_ENV_VARIABLE}
+ARG DATABASE_URL
+ENV DATABASE_URL=${DATABASE_URL}
+ARG POSRGRES_USER
+ENV POSRGRES_USER=${POSRGRES_USER}
+ARG POSTGRES_PASSWORD
+ENV POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+ARG AUTH_SECRET
+ENV AUTH_SECRET=${AUTH_SECRET}
+ARG AUTH_GOOGLE_ID
+ENV AUTH_GOOGLE_ID=${AUTH_GOOGLE_ID}
+ARG AUTH_GOOGLE_SECRET
+ENV AUTH_GOOGLE_SECRET=${AUTH_GOOGLE_SECRET}
+ARG AUTHENTICATION_API_KEY
+ENV AUTHENTICATION_API_KEY=${AUTHENTICATION_API_KEY}
 
 # Uncomment the following line to disable telemetry at run time
 # ENV NEXT_TELEMETRY_DISABLED 1
 
 # Note: Don't expose ports here, Compose will handle that for us
 
-CMD ["node", "server.js"]
+CMD ["npm", "run", "start:migrate:prod"]

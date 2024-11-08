@@ -20,6 +20,7 @@ FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+RUN npx prisma generate
 
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
@@ -35,9 +36,17 @@ RUN \
 
 # Production image, copy all the files and run next
 FROM base AS runner
-WORKDIR /app
+WORKDIR /app_dev
 
 ENV NODE_ENV=development
+
+# Defina o cronjob
+# RUN mkdir /etc/cron.d \
+#  && mkdir /app/logs \
+#  && echo "* * * * * cd /app && npx tsx app/lib/notificacao/index.ts | tee /app/logs/cron.log" > /etc/cron.d/notificar \
+#  && chmod 0644 /etc/cron.d/notificar \
+#  && crontab /etc/cron.d/notificar \
+#  && echo "nextjs" > /etc/cron.allow
 
 # Uncomment the following line in case you want to disable telemetry during runtime.
 # ENV NEXT_TELEMETRY_DISABLED=1
@@ -50,6 +59,12 @@ COPY --from=builder /app/public ./public
 # Set the correct permission for prerender cache
 RUN mkdir .next
 RUN chown nextjs:nodejs .next
+
+COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules/@prisma ./node_modules/@prisma
+
+# RUN chown -R nextjs:nodejs /app/node_modules/@prisma
 
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
@@ -65,4 +80,4 @@ ENV PORT=3000
 # server.js is created by next build from the standalone output
 # https://nextjs.org/docs/pages/api-reference/next-config-js/output
 ENV HOSTNAME="0.0.0.0"
-CMD ["node", "server.js"]
+CMD ["npm", "run", "start:migrate:prod"]
