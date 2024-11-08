@@ -1,17 +1,6 @@
 version: '3.7'
 
 services:
-  db:
-    container_name: postgres-prod
-    image: postgres:15-alpine
-    restart: always
-    environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-    volumes:
-      - postgres:/var/lib/postgresql/data
-    ports:
-      - '5432:5432'
 
   evolution-api:
     container_name: evolution_api-prod
