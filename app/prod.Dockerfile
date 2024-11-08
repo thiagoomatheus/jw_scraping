@@ -4,6 +4,8 @@ FROM node:18-alpine AS base
 FROM base AS builder
 
 RUN npm --version
+RUN npm install npm@latest --save-dev
+RUN npm --version
 
 WORKDIR /app
 
