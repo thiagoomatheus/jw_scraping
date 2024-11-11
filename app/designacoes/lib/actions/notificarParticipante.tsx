@@ -88,7 +88,7 @@ Olá irmão, tudo bem?
 
 Passando para confirmar sua designação para o dia ${designacao.semanaReference.diaReuniao}:
 
-*Designação: ${designacao}*
+*Designação: ${designacao.parteReference.nome}*
 
 Por favor, confirme sua participação.
 
