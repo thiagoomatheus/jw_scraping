@@ -1,7 +1,6 @@
 import React from "react"
 import { signIn } from "../lib/auth/auth"
 import Link from "next/link"
-import { redirect } from "next/navigation"
 
 export default function Page() {
     return (
