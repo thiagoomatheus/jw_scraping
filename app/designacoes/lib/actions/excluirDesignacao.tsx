@@ -8,6 +8,25 @@ import { redirect } from "next/navigation"
 
 export async function excluirDesignacao(idDesignacao: string, idCriadorDesignacao: string) {
 
+    const schema = z.object({
+        idDesignacao: z.string(),
+        idCriadorDesignacao: z.string()
+    }, {
+        message: "Dados recebidos incorretos"
+    })
+
+    const validacao = schema.safeParse({
+        idDesignacao,
+        idCriadorDesignacao
+    })
+
+    if (!validacao.success) return {
+        error: {
+            code: 401,
+            message: validacao.error.message
+        }
+    }
+
     const sessao = await auth()
     
     if (!sessao?.user) return redirect("/login")
@@ -21,25 +40,9 @@ export async function excluirDesignacao(idDesignacao: string, idCriadorDesignaca
         message: "Não foi você criou essa designação. Você só pode excluir as designações que você criou."
     }}
 
-
-    const schema = z.object({
-        id: z.string(),
-    }, {
-        message: "Dados recebidos incorretos"
-    })
-
-    const validacao = schema.safeParse({idDesignacao})
-
-    if (!validacao.success) return {
-        error: {
-            code: 401,
-            message: validacao.error.message
-        }
-    }
-
     await prisma.designacao.delete({
         where: {
-            id: validacao.data.id
+            id: validacao.data.idDesignacao
         }
     })
 
