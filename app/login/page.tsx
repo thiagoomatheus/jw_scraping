@@ -15,8 +15,7 @@ export default function Page() {
                 <form 
                     action={async () => {
                         "use server"
-                            await signIn("google")
-                            redirect("/minha-conta")
+                            await signIn("google", { redirectTo: "/minha-conta" })
                     }} 
                     className="flex flex-col space-y-4">
                     <button type="submit" className="flex items-center justify-center gap-2 p-3 border border-gray-300 dark:border-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white">
