@@ -7,9 +7,9 @@ export default function Page() {
         <section className="flex flex-col items-center justify-start gap-7 w-full">
             <div className="flex flex-col gap-5 max-w-md mx-auto p-6 mt-4 bg-white dark:bg-gray-800 border border-slate-200 dark:border-gray-700 rounded-lg shadow-md">
                 <h2 className="text-3xl font-bold text-center mb-4 text-gray-900 dark:text-gray-100">Conecte-se</h2>
-                <p className="text-white">Utilizamos a autenticação com Google via protocolo OAuth com o objetivo de tornar o processo de autenticação mais seguro e simplificado.</p>
-                <p className="text-white">Essa forma é mais segura do que credenciais por email e senha.</p>
-                <p className="text-white">Veja mais <a className="text-blue-500 underline hover:text-blue-700" href="https://auth0.com/pt/intro-to-iam/what-is-oauth-2" target="_blank">aqui</a></p>
+                <p>Utilizamos a autenticação com Google via protocolo OAuth com o objetivo de tornar o processo de autenticação mais seguro e simplificado.</p>
+                <p>Essa forma é mais segura do que credenciais por email e senha.</p>
+                <p>Veja mais <a className="text-blue-500 underline hover:text-blue-700" href="https://auth0.com/pt/intro-to-iam/what-is-oauth-2" target="_blank">aqui</a></p>
 
                 <form 
                     action={async () => {
