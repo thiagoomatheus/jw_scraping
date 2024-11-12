@@ -1,6 +1,6 @@
 
 import { getWeek, getYear } from 'date-fns'
-import { prisma } from '../prisma/prisma'
+import { prisma } from './prisma'
 
 async function enviarNotificacaoAgendada() {
 
