@@ -10,12 +10,7 @@ COPY package.json package-lock.json* ./
 # Omit --production flag for TypeScript devDependencies
 RUN npm ci
 
-COPY app ./app
-COPY public ./public
-COPY next.config.mjs .
-COPY tsconfig.json .
-COPY tailwind.config.ts .
-COPY prisma ./prisma
+COPY . .
 RUN npx prisma generate
 
 # Environment variables must be present at build time
@@ -68,8 +63,6 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
 COPY --from=builder --chown=nextjs:nodejs /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder --chown=nextjs:nodejs /app/node_modules/@prisma ./node_modules/@prisma
-
-COPY --from=builder --chown=nextjs:nodejs /app/app/lib/notificacao/index.ts ./
 
 # Environment variables must be redefined at run time
 ARG EVOLUTION_API_URL
