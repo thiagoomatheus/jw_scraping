@@ -9,6 +9,7 @@
     "build": "next build",
     "start": "next start",
     "start:migrate:prod": "npx prisma migrate deploy && node server.js",
+    "start:migrate:dev": "npx prisma migrate dev && node server.js",
     "lint": "next lint"
   },
   "dependencies": {
