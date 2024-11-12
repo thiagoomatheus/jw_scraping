@@ -12,7 +12,7 @@ RUN npm ci
 
 COPY app ./app
 COPY public ./public
-COPY next.config.js .
+COPY next.config.mjs .
 COPY tsconfig.json .
 COPY tailwind.config.ts .
 RUN npx prisma generate
