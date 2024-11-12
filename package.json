@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "tsc": "tsc",
-    "notificar": "npx tsx ./app/lib/notificacao/index.ts",
+    "notificar:prod": "npx tsx ./notificacao/index.ts",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
