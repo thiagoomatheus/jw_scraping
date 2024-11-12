@@ -22,20 +22,24 @@ export default async function Page() {
 
     if (!usuario) return redirect("/login")
 
-    const statusIntanciaWhatsApp: "open" | "closed" | undefined = await fetch(`${process.env.EVOLUTION_API_URL}/instance/connectionState/${usuario.instanciaWhatsApp}`, {
-        headers: {
-            "Content-Type": "application/json",
-            "apiKey": process.env.AUTHENTICATION_API_KEY!
-        },
-        cache: "no-store"
-    })
-    .then(async (res) => {
-        return await res.json()
-    })
-    .then((dados) => {
-        if (dados.error) return undefined
-        return dados.instance.state === "connecting" ? "closed" : dados.instance.state
-    })
+    let statusIntanciaWhatsApp: "open" | "closed" | undefined = undefined
+
+    if (usuario.funcao === "designar") {
+        await fetch(`${process.env.EVOLUTION_API_URL}/instance/connectionState/${usuario.instanciaWhatsApp}`, {
+            headers: {
+                "Content-Type": "application/json",
+                "apiKey": process.env.AUTHENTICATION_API_KEY!
+            },
+            cache: "no-store"
+        })
+        .then(async (res) => {
+            return await res.json()
+        })
+        .then((dados) => {
+            if (dados.error) return undefined
+            return dados.instance.state === "connecting" ? "closed" : dados.instance.state
+        })
+    }
 
     return (
         <>
@@ -47,11 +51,13 @@ export default async function Page() {
                     <p><span className="font-bold">Meu nome:</span> {usuario?.nome}</p>
                     <SessaoAltualizarInfoUsuario cong={usuario?.cong} funcao={usuario?.funcao} />
                 </div>
-                <div className="flex flex-col gap-5 items-center p-2 lg:p-5 rounded-lg w-full neumorphism dark:bg-gray-700 dark:shadow-none">
-                    <h2>Conectar WhatsApp</h2>
-                    <p>Conectando seu WhatsApp é possível enviar as designações para os participantes.</p>
-                    <SessaoConexaoWhatsApp instancia={usuario.instanciaWhatsApp ? usuario.instanciaWhatsApp : null} status={statusIntanciaWhatsApp} emailUsuario={usuario.email} />
-                </div>
+                {usuario.funcao === "designar" && (
+                    <div className="flex flex-col gap-5 items-center p-2 lg:p-5 rounded-lg w-full neumorphism dark:bg-gray-700 dark:shadow-none">
+                        <h2>Conectar WhatsApp</h2>
+                        <p>Conectando seu WhatsApp é possível enviar as designações para os participantes.</p>
+                        <SessaoConexaoWhatsApp instancia={usuario.instanciaWhatsApp ? usuario.instanciaWhatsApp : null} status={statusIntanciaWhatsApp} emailUsuario={usuario.email} />
+                    </div>
+                )}
             </section>
         </>
             
