@@ -15,6 +15,7 @@ COPY public ./public
 COPY next.config.mjs .
 COPY tsconfig.json .
 COPY tailwind.config.ts .
+COPY prisma ./prisma
 RUN npx prisma generate
 
 # Environment variables must be present at build time
