@@ -64,7 +64,7 @@ COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
 COPY --from=builder --chown=nextjs:nodejs /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder --chown=nextjs:nodejs /app/node_modules/@prisma ./node_modules/@prisma
 
-COPY --from=builder --chown=nextjs:nodejs /app/lib/notificacao/index.ts ./
+COPY --from=builder --chown=nextjs:nodejs /app/app/lib/notificacao/index.ts ./
 
 # Environment variables must be redefined at run time
 ARG EVOLUTION_API_URL
