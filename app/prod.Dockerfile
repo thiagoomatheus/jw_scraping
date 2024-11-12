@@ -10,7 +10,11 @@ COPY package.json package-lock.json* ./
 # Omit --production flag for TypeScript devDependencies
 RUN npm ci
 
-COPY . .
+COPY app ./app
+COPY public ./public
+COPY next.config.js .
+COPY tsconfig.json .
+COPY tailwind.config.ts .
 RUN npx prisma generate
 
 # Environment variables must be present at build time
