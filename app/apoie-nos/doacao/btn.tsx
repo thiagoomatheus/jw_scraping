@@ -2,8 +2,8 @@ import Link from "next/link";
 
 export default function Btn({tipo}: {tipo: "unico" | "recorrente"}) {
 
-    const linkPagamentoUnico = "https://sandbox.asaas.com/c/phdfgj6xdmdke44x"
-    const linkPagamentoRecorrente = "https://sandbox.asaas.com/c/c9w7ll553bt9au2p"
+    const linkPagamentoUnico = process.env.ASAAS_LINK_PAGAMENTO_UNICO!
+    const linkPagamentoRecorrente = process.env.ASAAS_LINK_PAGAMENTO_RECORRENTE!
 
     return (
         <Link href={tipo === "unico" ? linkPagamentoUnico : linkPagamentoRecorrente} target="_blank">
