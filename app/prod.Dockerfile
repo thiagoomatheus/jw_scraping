@@ -68,6 +68,10 @@ COPY --from=builder --chown=nextjs:nodejs /app/app/lib/notificacao/ ./notificaca
 COPY --from=builder --chown=nextjs:nodejs /app/node_modules/date-fns ./node_modules/date-fns
 
 # Environment variables must be redefined at run time
+ARG ASAAS_LINK_PAGAMENTO_UNICO
+ENV ASAAS_LINK_PAGAMENTO_UNICO=${ASAAS_LINK_PAGAMENTO_UNICO}
+ARG ASAAS_LINK_PAGAMENTO_RECORRENTE
+ENV ASAAS_LINK_PAGAMENTO_RECORRENTE=${ASAAS_LINK_PAGAMENTO_RECORRENTE}
 ARG EVOLUTION_API_URL
 ENV EVOLUTION_API_URL=${EVOLUTION_API_URL}
 ARG DATABASE_URL
