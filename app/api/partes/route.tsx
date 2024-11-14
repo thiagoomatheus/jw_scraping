@@ -357,6 +357,7 @@ export async function POST(req:NextRequest) {
         participante: string
         criadoPor: string
         cong: number
+        diaReuniao: string
     }[] = [
     ]
 
@@ -366,7 +367,8 @@ export async function POST(req:NextRequest) {
             participante: parte.participante!,
             parte: parte.id!,
             criadoPor: usuario.id!,
-            cong: usuario.cong!
+            cong: usuario.cong!,
+            diaReuniao: partes.diaReuniao
         })
     })
 
@@ -376,7 +378,8 @@ export async function POST(req:NextRequest) {
             participante: parte.participante!,
             parte: parte.id!,
             criadoPor: usuario.id!,
-            cong: usuario.cong!
+            cong: usuario.cong!,
+            diaReuniao: partes.diaReuniao
         })
     })
 
@@ -386,7 +389,8 @@ export async function POST(req:NextRequest) {
             participante: parte.participante!,
             parte: parte.id!,
             criadoPor: usuario.id!,
-            cong: usuario.cong!
+            cong: usuario.cong!,
+            diaReuniao: partes.diaReuniao
         })
     })
 
@@ -396,7 +400,8 @@ export async function POST(req:NextRequest) {
             participante: parte.participante!,
             parte: parte.id!,
             criadoPor: usuario.id!,
-            cong: usuario.cong!
+            cong: usuario.cong!,
+            diaReuniao: partes.diaReuniao
         })
     })
 

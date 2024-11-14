@@ -73,15 +73,15 @@ async function enviarNotificacaoAgendada() {
                 number: `55${designacao.telefone}`,
                 textMessage: {
                     text: `
-    Olá irmão, tudo bem?
-    
-    Passando para confirmar sua designação para o dia ${designacao.semanaReference.diaReuniao}:
-    
-    *Designação: ${designacao.parteReference.nome}*
-    
-    Por favor, confirme sua participação.
-    
-    Obrigado!`
+Olá irmão, tudo bem?
+
+Passando para confirmar sua designação para o dia ${designacao.diaReuniao}:
+
+*Designação: ${designacao.parteReference.nome}*
+
+Por favor, confirme sua participação.
+
+Obrigado!`
                 }
             })
         })

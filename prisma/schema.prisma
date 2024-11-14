@@ -48,6 +48,7 @@ model Parte {
 model Designacao {
   id               String  @id @default(uuid())
   semana           String
+  diaReuniao       String
   parte            String
   participante     String
   cong             Int

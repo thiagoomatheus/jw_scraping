@@ -86,7 +86,7 @@ export async function notificarParticipante(designacaoId: string, telefone: stri
                 text: `
 Olá irmão, tudo bem?
 
-Passando para confirmar sua designação para o dia ${designacao.semanaReference.diaReuniao}:
+Passando para confirmar sua designação para o dia ${designacao.diaReuniao}:
 
 *Designação: ${designacao.parteReference.nome}*
 
