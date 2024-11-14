@@ -188,7 +188,7 @@ export default function DesignationCard({data}: {
             <div className="flex gap-3">
                 <Link href={`mailto:thiagomatheus2001@hotmail.com?subject=Erro encontrado na semana ${data.semana}&body=Encontrei o seguinte erro: (Coloque o erro encontrado aqui)`} className="bg-red-500 hover:bg-red-400 p-2 rounded-lg dark:text-gray-900 shadow-lg font-bold cursor-pointer w-1/3 print:hidden flex flex-col items-center">Comunicar erro</Link>
                 {!salvo && <input className="bg-blue-500 hover:bg-blue-400 p-2 rounded-lg shadow-lg font-bold cursor-pointer w-1/3 print:hidden flex flex-col items-center" type="submit" value="Salvar" />}
-                {salvo && <Link href={`/designacoes?semana=${data.semana}`} className="bg-blue-500 hover:bg-blue-400 p-2 rounded-lg dark:text-gray-900 shadow-lg font-bold cursor-pointer w-1/3 print:hidden flex flex-col items-center">Ir para designacoes</Link>}
+                {salvo && <Link href={`/designacoes?semana=${data.semana}`} className="bg-blue-500 hover:bg-blue-400 p-2 rounded-lg dark:text-gray-900 shadow-lg font-bold cursor-pointer w-1/3 print:hidden flex flex-col items-center">Ir para designações</Link>}
             </div>
         </form>
     );
