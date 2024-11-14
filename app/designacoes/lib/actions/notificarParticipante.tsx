@@ -67,12 +67,11 @@ export async function notificarParticipante(designacaoId: string, telefone: stri
                 telefone: telefone
             }
         })
-        .then(() => {
-            return { data: {
-                code: 201,
-                message: "Notificação agendada com sucesso!"
-            }}
-        })
+
+        return { data: {
+            code: 201,
+            message: "Notificação agendada com sucesso!"
+        }}
     }
 
     const resNotificarParticipante = await fetch(`${process.env.EVOLUTION_API_URL}/message/sendText/${usuario.instanciaWhatsApp}`, {
