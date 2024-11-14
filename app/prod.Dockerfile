@@ -48,6 +48,8 @@ WORKDIR /app_prod
 
 ENV NODE_ENV=production
 
+RUN npm install -g tsx
+
 # Don't run production as root
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs

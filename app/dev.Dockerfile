@@ -40,6 +40,8 @@ WORKDIR /app_dev
 
 ENV NODE_ENV=development
 
+RUN npm install -g tsx
+
 # Defina o cronjob
 # RUN mkdir /etc/cron.d \
 #  && mkdir /app/logs \
