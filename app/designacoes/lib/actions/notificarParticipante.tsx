@@ -4,9 +4,8 @@ import { auth } from "../../../lib/auth/auth"
 import { getWeek } from "date-fns"
 import { redirect } from "next/navigation"
 import { prisma } from "../../../lib/prisma/prisma"
-import { Designacao, Parte, Semana, Usuario } from "@prisma/client"
 
-export async function notificarParticipante(designacao: (Designacao & { parteReference: Parte; semanaReference: Semana; usuarioReference: Usuario }), telefone: string, momentoDaNotificacao: "agora" | "semana") {
+export async function notificarParticipante(designacaoId: string, telefone: string, momentoDaNotificacao: "agora" | "semana") {
 
     const sessao = await auth()
     
@@ -16,7 +15,9 @@ export async function notificarParticipante(designacao: (Designacao & { parteRef
 
     if (!usuario) return redirect("/login")
 
-    if (usuario.id !== designacao.usuarioReference.id) return { error: {
+    const designacao = await prisma.designacao.findUnique({ where: { id: designacaoId }, include: { usuarioReference: true, semanaReference: true, parteReference: true } })
+
+    if (usuario.id !== designacao?.usuarioReference.id) return { error: {
         code: 400,
         message: "Não foi você criou essa designação. Você só pode notificar as designações que você criou."
     }}

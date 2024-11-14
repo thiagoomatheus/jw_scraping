@@ -32,7 +32,7 @@ export default function CartaoDeDesignacao( { designacao, excluir, autorizadoPar
                         const momentoDaNotificacao = dados.get("momento_da_notificacao") as "agora" | "semana"
                         const regexPhone: RegExp = /^([14689][0-9]|2[12478]|3([1-5]|[7-8])|5([13-5])|7[193-7])9[0-9]{8}$/
                         if (!telefone || !regexPhone.test(telefone)) return toast.error("Telefone inválido", { id: toastId })
-                        const resultado = await notificarParticipante(designacao, telefone, momentoDaNotificacao)
+                        const resultado = await notificarParticipante(designacao.id, telefone, momentoDaNotificacao)
                         if (resultado.error) return toast.error(resultado.error.message, { id: toastId })
                         toast.success(resultado.data.message, { id: toastId })
                         setModal(false)
