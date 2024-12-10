@@ -53,7 +53,11 @@ model Designacao {
   participante     String
   cong             Int
   criadoPor        String
-  telefone         String?
+  telefone          String?
+  formaDeTratamento String?
+  obsText           String?
+  nome Boolean?
+  tempo Boolean?
   usuarioReference Usuario @relation(fields: [criadoPor], references: [id], onDelete: Cascade)
   parteReference   Parte   @relation(fields: [parte], references: [id], onDelete: Cascade)
   semanaReference  Semana  @relation(fields: [semana], references: [semana], onDelete: Cascade)

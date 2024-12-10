@@ -5,7 +5,15 @@ import { getWeek } from "date-fns"
 import { redirect } from "next/navigation"
 import { prisma } from "../../../lib/prisma/prisma"
 
-export async function notificarParticipante(designacaoId: string, telefone: string, momentoDaNotificacao: "agora" | "semana") {
+export async function notificarParticipante(designacaoId: string, parametrosDaMensagem: {
+    telefone: string
+    momentoDaNotificacao: "agora" | "semana",
+    formaDeTratamento: string,
+    obs: boolean,
+    obsText: string
+    nome: boolean,
+    tempo: boolean,
+}) {
 
     const sessao = await auth()
     
@@ -47,7 +55,7 @@ export async function notificarParticipante(designacaoId: string, telefone: stri
         message: "A instância do WhatsApp não está aberta. Verifique sua instância na seção Minha Conta."
     }}
 
-    if (momentoDaNotificacao === "semana") {
+    if (parametrosDaMensagem.momentoDaNotificacao === "semana") {
 
         const hoje = new Date()
 
@@ -64,7 +72,11 @@ export async function notificarParticipante(designacaoId: string, telefone: stri
         await prisma.designacao.update({
             where: { id: designacao.id },
             data: {
-                telefone: telefone
+                telefone: parametrosDaMensagem.telefone,
+                formaDeTratamento: parametrosDaMensagem.formaDeTratamento,
+                nome: parametrosDaMensagem.nome,
+                tempo: parametrosDaMensagem.tempo,
+                obsText: parametrosDaMensagem.obsText
             }
         })
 
@@ -81,18 +93,24 @@ export async function notificarParticipante(designacaoId: string, telefone: stri
             "apiKey": process.env.AUTHENTICATION_API_KEY!
         },
         body: JSON.stringify({
-            number: `55${telefone}`,
+            number: `55${parametrosDaMensagem.telefone}`,
             textMessage: {
                 text: `
-Olá irmão, tudo bem?
+${parametrosDaMensagem.formaDeTratamento === "nenhum" && !parametrosDaMensagem.nome ? "Olá, tudo bem?" : parametrosDaMensagem.formaDeTratamento !== "nenhum" && !parametrosDaMensagem.nome ? `Olá ${parametrosDaMensagem.formaDeTratamento}, tudo bem?` : parametrosDaMensagem.formaDeTratamento === "nenhum" && parametrosDaMensagem.nome ? `Olá ${designacao.participante}, tudo bem?` : parametrosDaMensagem.formaDeTratamento !== "nenhum" && parametrosDaMensagem.nome ? `Olá ${parametrosDaMensagem.formaDeTratamento} ${designacao.participante}, tudo bem?` : ""}
 
 Passando para confirmar sua designação para o dia ${designacao.diaReuniao}:
 
 *Designação: ${designacao.parteReference.nome}*
 
+${!parametrosDaMensagem.tempo && !parametrosDaMensagem.obs ? "" : parametrosDaMensagem.tempo && !parametrosDaMensagem.obs && !parametrosDaMensagem.obsText ? `*Tempo: ${designacao.parteReference.tempo ? designacao.parteReference.tempo : "N/A"}*` : !parametrosDaMensagem.tempo && parametrosDaMensagem.obs && parametrosDaMensagem.obsText ? `*Obs.:* ${parametrosDaMensagem.obsText}` : 
+`*Tempo: ${designacao.parteReference.tempo ? designacao.parteReference.tempo : "N/A"}*
+
+*Obs.:* ${parametrosDaMensagem.obsText}`}
+
 Por favor, confirme sua participação.
 
-Obrigado!`
+Obrigado!
+`
             }
         })
     })

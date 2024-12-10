@@ -73,15 +73,21 @@ async function enviarNotificacaoAgendada() {
                 number: `55${designacao.telefone}`,
                 textMessage: {
                     text: `
-Olá irmão, tudo bem?
+${designacao.formaDeTratamento === "nenhum" && !designacao.nome ? "Olá, tudo bem?" : designacao.formaDeTratamento !== "nenhum" && !designacao.nome ? `Olá ${designacao.formaDeTratamento}, tudo bem?` : designacao.formaDeTratamento === "nenhum" && designacao.nome ? `Olá ${designacao.participante}, tudo bem?` : designacao.formaDeTratamento !== "nenhum" && designacao.nome ? `Olá ${designacao.formaDeTratamento} ${designacao.participante}, tudo bem?` : ""}
 
 Passando para confirmar sua designação para o dia ${designacao.diaReuniao}:
 
 *Designação: ${designacao.parteReference.nome}*
 
+${!designacao.tempo && !designacao.obsText ? "" : designacao.tempo && !designacao.obsText ? `*Tempo: ${designacao.parteReference.tempo ? designacao.parteReference.tempo : "N/A"}*` : !designacao.tempo && designacao.obsText ? `*Obs.:* ${designacao.obsText}` : 
+`*Tempo: ${designacao.parteReference.tempo ? designacao.parteReference.tempo : "N/A"}*
+
+*Obs.:* ${designacao.obsText}`}
+
 Por favor, confirme sua participação.
 
-Obrigado!`
+Obrigado!
+`
                 }
             })
         })
