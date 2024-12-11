@@ -9,6 +9,7 @@ WORKDIR /app
 COPY package.json package-lock.json* ./
 # Omit --production flag for TypeScript devDependencies
 RUN npm ci
+RUN apk add --no-cache openssl
 
 COPY . .
 RUN npx prisma generate
@@ -49,6 +50,7 @@ WORKDIR /app_prod
 ENV NODE_ENV=production
 
 RUN npm install -g tsx
+RUN apk add --no-cache openssl
 
 # Don't run production as root
 RUN addgroup --system --gid 1001 nodejs
