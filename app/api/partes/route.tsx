@@ -245,9 +245,9 @@ export async function GET(req:NextRequest) {
 
     const dateFrom = searchParams.get("dateFrom") as string
     const layout = parseFloat(searchParams.get("layout") as string)
-    const day = dateFrom.slice(0, 2)
-    const month = dateFrom.slice(2, 4)
-    const year = dateFrom.slice(4, 8)
+    const day = parseInt(dateFrom.slice(0, 2))
+    const month = parseInt(dateFrom.slice(2, 4))
+    const year = parseInt(dateFrom.slice(4, 8))
     
     const result = getPartesSchema.safeParse({
         dateFrom,
@@ -259,11 +259,14 @@ export async function GET(req:NextRequest) {
     }
 
     try {
-        const result = await getPartes(parseInt(year), getWeek(new Date(parseInt(year), parseInt(month) - 1, parseInt(day)), { weekStartsOn: 1 }), layout)
+
+        const week = getWeek(new Date(year, (month - 1), day), { weekStartsOn: 1 })
+
+        const result = await getPartes(week !== 1 ? year : month !== 12 ? year : year + 1, week, layout)
 
         if (result !== false && result.length === layout) return NextResponse.json({ partes: result }, { status: 200 })
 
-        const dataBase = new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
+        const dataBase = new Date(year, (month - 1), day)
         const partes: Partes[] = []
         const semanasDb: string[] = []
 
@@ -276,8 +279,11 @@ export async function GET(req:NextRequest) {
         
         for (let i = 0; i < layout; i++) {
             let data = add(dataBase, { days: 7 * i })
-            const ano = data.getFullYear()
+            let ano = data.getFullYear()
             const numeroSemana = getWeek(data, { weekStartsOn: 1 })
+            if (numeroSemana === 1 && data.getMonth() === 11) {
+                ano++
+            }
             if (!semanasDb.includes(`${numeroSemana}/${ano}`)) {
                 partes.push(await scrapePartes(ano, numeroSemana, format(data, "dd 'de' MMMM", { locale: ptBR })))
             }
