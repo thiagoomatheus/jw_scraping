@@ -29,3 +29,10 @@ export type Partes = {
     participante?: string
   }[]
 }
+
+export type Contato = {
+  id: string
+  pushName: string
+  profilePictureUrl: null,
+  owner: string
+}
