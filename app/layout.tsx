@@ -4,6 +4,7 @@ import "./globals.css";
 import { Toaster } from 'react-hot-toast';
 import Rodape from "./componentes/rodape";
 import Menu from "./componentes/menu";
+import { ThemeProvider } from "@/components/ui/themeProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,7 +24,14 @@ export default function RootLayout({
         <Menu />
         <Toaster position="top-center" />
         <main className="w-full flex flex-col gap-10 items-center p-2 md:p-5 xl:p-8 min-h-[68vh]">
-          {children}
+        <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {children}
+          </ThemeProvider>
         </main>
         <Rodape />
       </body>
