@@ -57,7 +57,7 @@ export default function SecaoDeDesignacoes({ designacoes, autorizadoParaAcoes, c
             )}
             <section className="flex flex-col gap-5 md:grid md:grid-cols-2 xl:grid-cols-3 justify-center items-center w-full max-w-7xl">
                 {designacoesFiltradas.map(designacao => (
-                    <CartaoDeDesignacao key={designacao.id} designacao={designacao} excluir={filtrarExcluidas} autorizadoParaAcoes={autorizadoParaAcoes} />
+                    <CartaoDeDesignacao key={designacao.id} designacao={designacao} excluir={filtrarExcluidas} autorizadoParaAcoes={autorizadoParaAcoes} contatos={contatos} />
                 ))}
             </section>
                 

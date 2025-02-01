@@ -10,6 +10,7 @@ import Modal from "@/app/componentes/modal"
 import Textarea from "@/app/designar/componentes/textarea"
 import Btn from "@/app/minha-conta/components/btn"
 import { Contato } from "@/app/lib/types/types"
+import AccordionContatoParticipante from "./accordionContatoParticipante"
 
 export default function CartaoDeDesignacao( { designacao, excluir, autorizadoParaAcoes, contatos }: {
     designacao: (Designacao & { parteReference: Parte; semanaReference: Semana; usuarioReference: Usuario })
@@ -61,9 +62,7 @@ export default function CartaoDeDesignacao( { designacao, excluir, autorizadoPar
                         })
                         setModal("mensagem")
                     }}>
-                        <label className="flex flex-col gap-3">WhatsApp do participante:
-                            <input className="border-2 border-blue-300 w-full" required type="tel" name="telefone" />
-                        </label>
+                        <AccordionContatoParticipante contatos={contatos} />
                         <p>Selecione quando irá notificar:</p>
                         <div className="flex flex-row gap-3">
                             <label className="w-full flex border p-2 border-blue-300 rounded-lg flex-row gap-2 justify-between cursor-pointer">
