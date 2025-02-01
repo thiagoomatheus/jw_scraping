@@ -115,10 +115,15 @@ Obrigado!
         })
     })
 
-    if (resNotificarParticipante.status !== 201) return { error: {
-        code: 401,
-        message: "Erro ao notificar participante. Tente novamente mais tarde."
-    }}
+    if (resNotificarParticipante.status !== 201) {
+        const error = await resNotificarParticipante.json()
+        console.log(error.response.message)
+        
+        return { error: {
+            code: 401,
+            message: "Erro ao notificar participante. Tente novamente mais tarde."
+        }}
+    }
     
     return { data: {
         code: resNotificarParticipante.status,
