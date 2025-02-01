@@ -3,6 +3,7 @@ import { auth } from "../lib/auth/auth"
 import SecaoDeDesignacoes from "./componentes/secaoDeDesignacoes"
 import { prisma } from "../lib/prisma/prisma"
 import Link from "next/link"
+import { receberContatos } from "./lib/actions/actions"
 
 export default async function Page() {
 
@@ -33,7 +34,9 @@ export default async function Page() {
         <p>Você ainda não possui designações. Vá até a seção <Link className="font-bold underline hover:text-blue-500" href="/designar">&quot;Designar&quot;</Link> para criar uma.</p>
     )
 
+    const contatos = await receberContatos(usuario?.instanciaWhatsApp)
+
     return (
-        <SecaoDeDesignacoes designacoes={designacoes} autorizadoParaAcoes={usuario?.funcao === "designar" ? true : false} />
+        <SecaoDeDesignacoes designacoes={designacoes} autorizadoParaAcoes={usuario?.funcao === "designar" ? true : false} contatos={contatos} />
     )
 }

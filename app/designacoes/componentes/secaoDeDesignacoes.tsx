@@ -5,10 +5,12 @@ import { useState } from "react";
 import CartaoDeDesignacao from "./cartaoDeDesignacao";
 import Btn from "@/app/minha-conta/components/btn";
 import Modal from "@/app/componentes/modal";
+import { Contato } from "@/app/lib/types/types";
 
-export default function SecaoDeDesignacoes({ designacoes, autorizadoParaAcoes }: { 
+export default function SecaoDeDesignacoes({ designacoes, autorizadoParaAcoes, contatos }: { 
     designacoes: (Designacao & { parteReference: Parte; semanaReference: Semana; usuarioReference: Usuario })[]
     autorizadoParaAcoes: boolean
+    contatos: Contato[]
 }) {
 
     const [designacoesFiltradas, setDesignacoesFiltradas] = useState<(Designacao & { parteReference: Parte; semanaReference: Semana; usuarioReference: Usuario })[]>(designacoes)

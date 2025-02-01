@@ -9,11 +9,13 @@ import { excluirDesignacao } from "../lib/actions/excluirDesignacao"
 import Modal from "@/app/componentes/modal"
 import Textarea from "@/app/designar/componentes/textarea"
 import Btn from "@/app/minha-conta/components/btn"
+import { Contato } from "@/app/lib/types/types"
 
-export default function CartaoDeDesignacao( { designacao, excluir, autorizadoParaAcoes }: {
+export default function CartaoDeDesignacao( { designacao, excluir, autorizadoParaAcoes, contatos }: {
     designacao: (Designacao & { parteReference: Parte; semanaReference: Semana; usuarioReference: Usuario })
     excluir: (id: string) => void
     autorizadoParaAcoes: boolean
+    contatos: Contato[]
 } ) {
 
     const [participante, setParticipante] = useState(designacao.participante)
