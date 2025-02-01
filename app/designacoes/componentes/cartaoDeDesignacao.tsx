@@ -22,7 +22,6 @@ export default function CartaoDeDesignacao( { designacao, excluir, autorizadoPar
     const [participante, setParticipante] = useState(designacao.participante)
     const [editar, setEditar] = useState<boolean>(false)
     const [modal, setModal] = useState<"telefone" | "mensagem">()
-    const [checked, setChecked] = useState<boolean>(false);
     const [parametrosDaMensagem, setParametrosDaMensagem] = useState<{
         telefone: string
         momentoDaNotificacao: "agora" | "semana",
@@ -41,20 +40,23 @@ export default function CartaoDeDesignacao( { designacao, excluir, autorizadoPar
         tempo: false,
     })
 
-    console.log(parametrosDaMensagem)
-
     return (
         <div className={`flex flex-col gap-5 border-t-4 rounded-lg shadow-lg bg-white dark:bg-gray-800 p-6 ${designacao.parteReference.secao === "ministerio" ? "border-yellow-700" : designacao.parteReference.secao === "vida" ? "border-red-700" : designacao.parteReference.secao === "tesouros" ? "border-gray-700" : "dark:border-white border-blue-400"}`}>
             {modal === "telefone" && autorizadoParaAcoes && (
                 <Modal>
                     <h3>Notifique o participante</h3>
                     <form className="flex flex-col gap-3" action={async (dados: FormData) => {
+
                         const toastId = toast.success("Escolha os parâmetros da mensagem")
-                        const telefone = dados.get("telefone") as string
-                        const momentoDaNotificacao = dados.get("momento_da_notificacao") as "agora" | "semana"
+
+                        const telefoneBruto = dados.get("telefone") as string
+                        const telefone = telefoneBruto.startsWith("+55") ? telefoneBruto.slice(3).trim().replace(/[^0-9]/g, "") : telefoneBruto.trim().replace(/[^0-9]/g, "")
                         const regexPhone: RegExp = /^([14689][0-9]|2[12478]|3([1-5]|[7-8])|5([13-5])|7[193-7])9[0-9]{8}$/
                         if (!telefone || !regexPhone.test(telefone)) return toast.error("Telefone inválido", { id: toastId })
+                        
+                        const momentoDaNotificacao = dados.get("momento_da_notificacao") as "agora" | "semana"
                         if (!momentoDaNotificacao) return toast.error("Selecione quando irá notificar", { id: toastId })
+
                         setParametrosDaMensagem({
                             ...parametrosDaMensagem,
                             telefone: telefone,
@@ -96,31 +98,6 @@ export default function CartaoDeDesignacao( { designacao, excluir, autorizadoPar
             {modal === "mensagem" && autorizadoParaAcoes && (
                 <Modal>
                     <h3>Mensagem</h3>
-                    {/* <p>Confirme a mensagem a ser enviada. Lembre-se que você poderá usar as <a className="underline font-bold hover:text-blue-400" href="https://faq.whatsapp.com/539178204879377/?helpref=uf_share" target="_blank">formatações do WhatsApp</a>.</p>
-                    <form className="flex w-full flex-col gap-3" action={async (dados: FormData) => {
-                        const toastId = toast.loading("Notificando ...")
-                        const mensagem = dados.get("mensagem") as string
-                        const resultado = await notificarParticipante(designacao.id, notificacao?.telefone!, notificacao?.momentoDaNotificacao!, mensagem)
-                        if (resultado.error) return toast.error(resultado.error.message, { id: toastId })
-                        toast.success(resultado.data.message, { id: toastId })
-                        setModal(undefined)
-                    }}>
-                        <textarea className="border-solid border border-blue-300 w-full min-h-48 p-2" required defaultValue={`
-Olá irmão, tudo bem?
-
-Passando para confirmar sua designação para o dia ${designacao.diaReuniao}:
-
-*Designação: ${designacao.parteReference.nome}*
-
-Por favor, confirme sua participação.
-
-Obrigado!`
-                        } name="mensagem" />
-                        <div className="flex gap-3">
-                            <Btn className="bg-red-500 hover:bg-red-400" onClick={() => setModal(undefined)}>Cancelar</Btn>
-                            <Btn className="bg-green-500 hover:bg-green-400" type="submit">Enviar</Btn>
-                        </div>
-                    </form> */}
                     <p>Selecione alguns parâmetros da mensagem:</p>
                     <form action={async () => {
                         const toastId = toast.success("Notificando ...")
