@@ -121,7 +121,7 @@ export default function SessaoConexaoWhatsApp( { instancia, status, emailUsuario
                     </div>
                 </Modal>
             )}
-            {!instancia && (
+            {!instancia || !statusInstancia && (
                 <>
                     <Btn onClick={async () => {
 
