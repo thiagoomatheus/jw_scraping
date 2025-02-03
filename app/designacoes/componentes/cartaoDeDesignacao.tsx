@@ -2,15 +2,13 @@
 
 import { Designacao, Parte, Semana, Usuario } from "@prisma/client"
 import { useState } from "react"
-import { editarParticipante } from "../lib/actions/editarParticipante"
 import toast from "react-hot-toast"
-import { notificarParticipante } from "../lib/actions/notificarParticipante"
-import { excluirDesignacao } from "../lib/actions/excluirDesignacao"
 import Modal from "@/app/componentes/modal"
 import Textarea from "@/app/designar/componentes/textarea"
 import Btn from "@/app/minha-conta/components/btn"
 import { Contato } from "@/app/lib/types/types"
 import AccordionContatoParticipante from "./accordionContatoParticipante"
+import { editarParticipante, excluirDesignacao, notificarParticipante } from "../lib/actions/actions"
 
 export default function CartaoDeDesignacao( { designacao, excluir, autorizadoParaAcoes, contatos }: {
     designacao: (Designacao & { parteReference: Parte; semanaReference: Semana; usuarioReference: Usuario })
