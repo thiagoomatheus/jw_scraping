@@ -25,7 +25,12 @@ export function SelecaoDeContato( { contatos }: {contatos: Contato[]}) {
   const [value, setValue] = React.useState("")
   const [search, setSearch] = React.useState("")
 
-  const contatosFiltrados = search.length > 0 ? contatos.filter((contato) => contato.pushName.toLowerCase().includes(search.toLowerCase())).slice(0, 7) : contatos.slice(0, 7)
+  const contatosFiltrados = search.length > 0 ? contatos.filter((contato) => {
+    if (!contato.pushName) {
+      return
+    }
+    return contato.pushName.toLowerCase().includes(search.toLowerCase())
+  }).slice(0, 7) : contatos.slice(0, 7)
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
