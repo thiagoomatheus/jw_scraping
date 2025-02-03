@@ -36,7 +36,8 @@ export default async function Page() {
             return await res.json()
         })
         .then((dados) => {
-            if (dados.error) return undefined
+            if (dados.error || !dados.instance) return undefined
+            if (dados.instance.instanceName !== usuario.instanciaWhatsApp) return undefined
             return statusIntanciaWhatsApp = dados.instance.state === "connecting" ? "closed" : dados.instance.state
         })
     }
