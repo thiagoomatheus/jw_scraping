@@ -38,7 +38,7 @@ export default function SessaoConexaoWhatsApp( { instancia, status, emailUsuario
                 }}
                 className="bg-red-500">Desconectar</Btn>
             )}
-            {instancia && statusInstancia !== "open" && (
+            {instancia && statusInstancia === "closed" && (
                 <>
                     <Btn onClick={async () => {
 
