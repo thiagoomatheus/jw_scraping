@@ -103,30 +103,86 @@ export default function CartaoDeDesignacao( { designacao, excluir, autorizadoPar
     const obsInputRef = useRef<HTMLInputElement>(null)
 
     return (
+        <div 
+            className={`flex flex-col gap-5 border-t-4 rounded-lg shadow-lg bg-white dark:bg-gray-800 p-6 ${designacao.parteReference.secao === "ministerio" ? "border-yellow-700" : designacao.parteReference.secao === "vida" ? "border-red-700" : designacao.parteReference.secao === "tesouros" ? "border-gray-700" : "dark:border-white border-blue-400"}`}
+        >
             {parametros.modal === "telefone" && autorizadoParaAcoes && (
                 <Modal>
                     <h3>Notifique o participante</h3>
-                    <form className="flex flex-col gap-3" action={async (dados: FormData) => {
+                    <form
+                        className="flex flex-col gap-3"
+                        action={async (dados: FormData) => {
 
-                        const toastId = toast.success("Escolha os parâmetros da mensagem")
+                            const toastId = toast.success("Escolha os parâmetros da mensagem")
 
+                            const telefoneBruto = dados.get("telefone") as string
+                            if (!telefoneBruto) return toast.error("Digite um telefone", { id: toastId })
+                            const telefone = telefoneBruto.startsWith("+55") ? telefoneBruto.slice(3).trim().replace(/[^0-9]/g, "") : telefoneBruto.trim().replace(/[^0-9]/g, "")
+                            const regexPhone: RegExp = /^([14689][0-9]|2[12478]|3([1-5]|[7-8])|5([13-5])|7[193-7])9[0-9]{8}$/
+                            if (!telefone || !regexPhone.test(telefone)) return toast.error("Telefone inválido", { id: toastId })
+                            
+                            const momentoDaNotificacao = dados.get("momento_da_notificacao") as "agora" | "semana"
+                            if (!momentoDaNotificacao) return toast.error("Selecione quando irá notificar", { id: toastId })
+                            
                             dispatch({
                                 type: "adicionandoTelefoneEMomentoDaNotificacao",
                                 telefone: telefone,
                                 momentoDaNotificacao: momentoDaNotificacao
                             })
+                        }}
+                    >
+                        <AccordionContatoParticipante
+                            contatos={contatos}
+                        />
                         <p>Selecione quando irá notificar:</p>
-                        <div className="flex flex-row gap-3">
-                            <label className="w-full flex border p-2 border-blue-300 rounded-lg flex-row gap-2 justify-between cursor-pointer">
+                        <div
+                            className="flex flex-row gap-3"
+                        >
+                            <label
+                                className="w-full flex border p-2 border-blue-300 rounded-lg flex-row gap-2 justify-between cursor-pointer"
+                            >
                                 <p>Agora</p>
-                                <input required className="border border-blue-400 appearance-none rounded-full checked:bg-blue-300 p-3" type="radio" name="momento_da_notificacao" value="agora" />
+                                <input
+                                    required
+                                    className="border border-blue-400 appearance-none rounded-full cursor-pointer checked:bg-blue-300 dark:checked:bg-blue-300 p-3"
+                                    type="radio"
+                                    name="momento_da_notificacao"
+                                    value="agora"
+                                />
                             </label>
-                            <label className="w-full flex border p-2 border-blue-300 rounded-lg flex-row gap-2 justify-between cursor-pointer">
+                            <label
+                                className="w-full flex border p-2 border-blue-300 rounded-lg flex-row gap-2 justify-between cursor-pointer"
+                            >
                                 <p>Na semana</p>
-                                <input required className="border border-blue-400 appearance-none rounded-full checked:bg-blue-300 p-3" type="radio" name="momento_da_notificacao" value="semana" />
+                                <input
+                                    required
+                                    className="border border-blue-400 appearance-none rounded-full cursor-pointer checked:bg-blue-300 dark:checked:bg-blue-300 p-3"
+                                    type="radio"
+                                    name="momento_da_notificacao"
+                                    value="semana"
+                                />
                             </label>
                         </div>
+                        <p
+                            className="text-[8px] lg:text-[10px]"
+                        >
+                            Atenção: Ao selecionar a opção &quot;Na semana&quot; é necessário salvar o número do participante em nosso banco de dados. Assim, ao selecionar essa opção entendemos que você tem o consentimento dele para isso.
+                        </p>
+                        <div
+                            className="flex gap-3"
+                        >
+                            <Btn
+                                className="bg-red-500 hover:bg-red-400"
                                 onClick={() => dispatch({ type: "resetandoParametros" })}
+                            >
+                                Cancelar
+                            </Btn>
+                            <Btn
+                                className="bg-green-500 hover:bg-green-400"
+                                type="submit"
+                            >
+                                Continuar
+                            </Btn>
                         </div>
                     </form>
                 </Modal>
@@ -135,41 +191,120 @@ export default function CartaoDeDesignacao( { designacao, excluir, autorizadoPar
                 <Modal>
                     <h3>Mensagem</h3>
                     <p>Selecione alguns parâmetros da mensagem:</p>
+                    <form
+                        action={async () => {
+                            const toastId = toast.success("Notificando ...")
+                            const resultado = await notificarParticipante(designacao.id, parametros)
+                            if (resultado.error) return toast.error(resultado.error.message, { id: toastId })
+                            toast.success(resultado.data.message, { id: toastId })
                             dispatch({ type: "resetandoParametros" })
+                        }}
+                        className="flex flex-col w-full gap-3"
+                    >
+                        <fieldset
+                            className="flex flex-row gap-3 justify-between border border-blue-300 p-2 rounded-md"
+                        >
+                            <legend>Forma de tratamento:</legend>
+                            <label
+                                className="flex flex-col justify-center items-center gap-1"
+                            >
                                 <p>Irmão</p>
+                                <input
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                                         dispatch({ type: "adicionandoFormaDeTratamento", formaDeTratamento: e.target.value as "irmão" })
+                                    }}
+                                    type="radio"
+                                    name="formaDeTratamento"
+                                    value="irmão"
+                                />
+                            </label>
+                            <label
+                                className="flex flex-col justify-center items-center gap-1"
+                            >
                                 <p>Irmã</p>
+                                <input
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                                         dispatch({ type: "adicionandoFormaDeTratamento", formaDeTratamento: e.target.value as "irmã" })
+                                    }}
+                                    type="radio"
+                                    name="formaDeTratamento"
+                                    value="irmã"
+                                />
+                            </label>
+                            <label
+                                className="flex flex-col justify-center items-center gap-1"
+                            >
                                 <p>Nenhum</p>
+                                <input
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                                         dispatch({ type: "adicionandoFormaDeTratamento", formaDeTratamento: e.target.value as "nenhum" })
+                                    }}
+                                    type="radio"
+                                    name="formaDeTratamento"
                                     value="nenhum"
                                     defaultChecked
                                 />
-                           </label>
-                       </fieldset>
-                       <fieldset className="flex flex-row gap-3 justify-between border border-blue-300 p-2 rounded-md">
-                           <legend>Selecione o que incluir na mensagem:</legend>
-                           <label className="flex flex-col justify-center items-center gap-1">
+                            </label>
+                        </fieldset>
+                        <fieldset
+                            className="flex flex-row gap-3 justify-between border border-blue-300 p-2 rounded-md"
+                        >
+                            <legend>Selecione o que incluir na mensagem:</legend>
+                            <label
+                                className="flex flex-col justify-center items-center gap-1"
+                            >
                                 <p>Observação</p>
+                                <input
                                     onChange={() => dispatch({ type: "adicionandoObs", obs: obsInputRef.current?.checked })}
                                     type="checkbox"
                                     name="obs"
                                     ref={obsInputRef}
+                                />
+                            </label>
+                            <label
+                                className="flex flex-col justify-center items-center gap-1"
+                            >
                                 <p>Nome</p>
+                                <input
                                     onChange={() => dispatch({ type: "adicionandoNome", nome: nomeInputRef.current?.checked })}
                                     type="checkbox"
                                     name="nome"
                                     ref={nomeInputRef}
+                                />
+                            </label>
+                            <label
+                                className="flex flex-col justify-center items-center gap-1"
+                            >
                                 <p>Tempo</p>
+                                <input
                                     onChange={() => dispatch({ type: "adicionandoTempo", tempo: tempoInputRef.current?.checked })}
                                     type="checkbox"
                                     name="tempo"
                                     ref={tempoInputRef}
+                                />
+                            </label>
+                        </fieldset>
+                        <fieldset
+                            className={`flex flex-row gap-3 justify-between border border-blue-300 p-2 rounded-md ${!parametros.obs && "opacity-50"}`}
+                        >
                             <legend>Observação:</legend>
-                            <label className="flex flex-col justify-center items-center gap-1 w-full">
+                            <label
+                                className="flex flex-col justify-center items-center gap-1 w-full"
+                            >
                                 <p>Insira a observação</p>
+                                <textarea
+                                    placeholder="Máximo de 150 caracteres"
+                                    maxLength={150} name="obsText" {...(!parametros.obs && { disabled: true })}
+                                    className="border-solid border border-blue-300 w-full p-2 bg-transparent"
                                     onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => dispatch({ type: "adicionandoObs", obsText: e.target.value })} value={parametros.obsText}
+                                />
+                            </label>
+                        </fieldset>
+                        <fieldset
+                            className="flex flex-col gap-3 justify-between border border-blue-300 p-2 rounded-md w-full"
+                        >
                             <legend>Confira a mensagem:</legend>
+
                             {parametros.formaDeTratamento === "nenhum" && !parametros.nome && <p>Olá, tudo bem?</p>}
                             {parametros.formaDeTratamento !== "nenhum" && !parametros.nome && <p>Olá {parametros.formaDeTratamento}, tudo bem?</p>}
                             {parametros.formaDeTratamento === "nenhum" && parametros.nome && <p>Olá {designacao.participante}, tudo bem?</p>}
@@ -181,39 +316,98 @@ export default function CartaoDeDesignacao( { designacao, excluir, autorizadoPar
                             {parametros.obs && parametros.obsText && <p><span className="font-bold">Obs.:</span> {parametros.obsText}</p>}
                             <p>Por favor, confirme sua participação.</p>
                             <p>Obrigado!</p>
+
+                        </fieldset>
+                        <div
+                            className="flex gap-3"
+                        >
+                            <Btn
+                                className="bg-red-500 hover:bg-red-400"
                                 onClick={() => dispatch({ type: "resetandoParametros" })}
+                            >
+                                Cancelar
+                            </Btn>
+                            <Btn
+                                className="bg-green-500 hover:bg-green-400"
+                                type="submit"
+                            >
+                                Enviar
+                            </Btn>
                         </div>
                     </form>
                 </Modal>
             )}
-            <p><span className="font-bold">Semana:</span> {designacao.semanaReference.semana}</p>
-            <p><span className="font-bold">Descrição:</span> {designacao.parteReference.nome}</p>
-            <p className="flex"><span className="font-bold">Participante:</span> <Textarea className={`dark:bg-gray-800 ${editar ? "border" : "border-none"}`} value={participante} {...!editar ? { disabled: true } : { disabled: false }} onChange={(e) => setParticipante(e.target.value)} /></p>
-            <p>Tempo: {designacao.parteReference.tempo ? designacao.parteReference.tempo : "N/A"}</p>
-            <p>Criada por: {designacao.usuarioReference.nome}</p>
+            <p>
+                <span className="font-bold">Semana:</span> {designacao.semanaReference.semana}
+            </p>
+            <p>
+                <span className="font-bold">Descrição:</span> {designacao.parteReference.nome}
+            </p>
+            <p
+                className="flex"
+            >
+                <span className="font-bold">Participante:</span> <Textarea className={`dark:bg-gray-800 ${editar ? "border" : "border-none"}`} value={participante} {...!editar ? { disabled: true } : { disabled: false }} onChange={(e) => setParticipante(e.target.value)} />
+
+            </p>
+            <p>
+                Tempo: {designacao.parteReference.tempo ? designacao.parteReference.tempo : "N/A"}
+            </p>
+            <p>
+                Criada por: {designacao.usuarioReference.nome}
+            </p>
             {autorizadoParaAcoes && 
                 <div className="flex gap-5">
                     {!editar && (
                         <>
+                            <Btn
+                                className="bg-green-500 hover:bg-green-400"
                                 onClick={() => dispatch({ type: "iniciandoNotificacao" })}
+                            >
+                                Notificar
+                            </Btn>
+                            <Btn
+                                onClick={() => setEditar(true)}
+                            >
+                                Editar
+                            </Btn>
+                            <Btn
+                                className="bg-red-500 hover:bg-red-400"
+                                onClick={async () => {
+                                    const resultado = await excluirDesignacao(designacao.id, designacao.usuarioReference.id)
+                                    if (resultado.error) return toast.error(resultado.error.message)
+                                    excluir(designacao.id)
+                                    return toast.success(resultado.data.message)
+                                }}
+                            >
+                                Excluir
+                            </Btn>
                         </>
                     )}
                     {editar && (
                         <>
-                            <Btn className="bg-red-500 hover:bg-red-400" onClick={() => {
-                                setParticipante(designacao.participante)
-                                setEditar(false)
-                            }}>Cancelar</Btn>
-                            <Btn onClick={async () => {
-                                const resultado = await editarParticipante(participante, designacao.id)
-                                if (resultado.error) {
-                                    setEditar(false)
+                            <Btn
+                                className="bg-red-500 hover:bg-red-400"
+                                onClick={() => {
                                     setParticipante(designacao.participante)
-                                    return toast.error(resultado.error.message)
-                                }
-                                setEditar(false)
-                                return toast.success(resultado.data.message)
-                            }}>Salvar</Btn>
+                                    setEditar(false)
+                                }}
+                            >
+                                Cancelar
+                            </Btn>
+                            <Btn
+                                onClick={async () => {
+                                    const resultado = await editarParticipante(participante, designacao.id)
+                                    if (resultado.error) {
+                                        setEditar(false)
+                                        setParticipante(designacao.participante)
+                                        return toast.error(resultado.error.message)
+                                    }
+                                    setEditar(false)
+                                    return toast.success(resultado.data.message)
+                                }}
+                            >
+                                Salvar
+                            </Btn>
                         </>
                     )}
                 </div>
