@@ -117,7 +117,7 @@ export async function excluirDesignacao(idDesignacao: string, idCriadorDesignaca
 export async function notificarParticipante(designacaoId: string, parametrosDaMensagem: {
     telefone: string
     momentoDaNotificacao: "agora" | "semana",
-    formaDeTratamento: string,
+    formaDeTratamento: "nenhum" | "irmão" | "irmã",
     obs: boolean,
     obsText: string
     nome: boolean,
@@ -195,6 +195,33 @@ export async function notificarParticipante(designacaoId: string, parametrosDaMe
         }}
     }
 
+    let saudacao = ""
+
+    if (parametrosDaMensagem.formaDeTratamento === "nenhum" && !parametrosDaMensagem.nome) {
+        saudacao = "Olá, tudo bem?";
+    } else if (parametrosDaMensagem.formaDeTratamento !== "nenhum" && !parametrosDaMensagem.nome) {
+        saudacao = `Olá ${parametrosDaMensagem.formaDeTratamento}, tudo bem?`;
+    } else if (parametrosDaMensagem.formaDeTratamento === "nenhum" && parametrosDaMensagem.nome) {
+        saudacao = `Olá ${designacao.participante}, tudo bem?`;
+    } else if (parametrosDaMensagem.formaDeTratamento !== "nenhum" && parametrosDaMensagem.nome) {
+        saudacao = `Olá ${parametrosDaMensagem.formaDeTratamento} ${designacao.participante}, tudo bem?`;
+    }
+
+    let corpo = ""
+
+    if (parametrosDaMensagem.tempo && !parametrosDaMensagem.obs) {
+        corpo = `*Tempo: ${designacao.parteReference.tempo ? designacao.parteReference.tempo : "N/A"}*
+        `
+    } else if (!parametrosDaMensagem.tempo && parametrosDaMensagem.obs && parametrosDaMensagem.obsText) {
+        corpo = `*Obs.:* ${parametrosDaMensagem.obsText}
+        `    
+    } else if (parametrosDaMensagem.tempo && parametrosDaMensagem.obs && parametrosDaMensagem.obsText) {
+        corpo = `*Tempo: ${designacao.parteReference.tempo ? designacao.parteReference.tempo : "N/A"}*
+
+*Obs.:* ${parametrosDaMensagem.obsText}
+`
+    }
+
     const resNotificarParticipante = await fetch(`${process.env.EVOLUTION_API_URL}/message/sendText/${usuario.instanciaWhatsApp}`, {
         method: "POST",
         headers: {
@@ -205,20 +232,18 @@ export async function notificarParticipante(designacaoId: string, parametrosDaMe
             number: `55${parametrosDaMensagem.telefone}`,
             textMessage: {
                 text: `
-${parametrosDaMensagem.formaDeTratamento === "nenhum" && !parametrosDaMensagem.nome ? "Olá, tudo bem?" : parametrosDaMensagem.formaDeTratamento !== "nenhum" && !parametrosDaMensagem.nome ? `Olá ${parametrosDaMensagem.formaDeTratamento}, tudo bem?` : parametrosDaMensagem.formaDeTratamento === "nenhum" && parametrosDaMensagem.nome ? `Olá ${designacao.participante}, tudo bem?` : parametrosDaMensagem.formaDeTratamento !== "nenhum" && parametrosDaMensagem.nome ? `Olá ${parametrosDaMensagem.formaDeTratamento} ${designacao.participante}, tudo bem?` : ""}
+${saudacao}
 
 Passando para confirmar sua designação para o dia ${designacao.diaReuniao}:
 
 *Designação: ${designacao.parteReference.nome}*
 
-${!parametrosDaMensagem.tempo && !parametrosDaMensagem.obs ? "" : parametrosDaMensagem.tempo && !parametrosDaMensagem.obs && !parametrosDaMensagem.obsText ? `*Tempo: ${designacao.parteReference.tempo ? designacao.parteReference.tempo : "N/A"}*` : !parametrosDaMensagem.tempo && parametrosDaMensagem.obs && parametrosDaMensagem.obsText ? `*Obs.:* ${parametrosDaMensagem.obsText}` : 
-`*Tempo: ${designacao.parteReference.tempo ? designacao.parteReference.tempo : "N/A"}*
+${corpo ? corpo : `Por favor, confirme sua participação.
 
-*Obs.:* ${parametrosDaMensagem.obsText}`}
+Obrigado!`}
+${corpo ? `Por favor, confirme sua participação.
 
-Por favor, confirme sua participação.
-
-Obrigado!
+Obrigado!`: ``}
 `
             }
         })
