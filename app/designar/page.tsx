@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import Formulario from "./componentes/formulario";
 import { prisma } from "../lib/prisma/prisma";
 import { auth } from "../lib/auth/auth";
+import DesignarContextProvider from "./lib/contexts/DesignarContext";
 
 export default async function Designar() {
 
@@ -26,7 +27,9 @@ export default async function Designar() {
     return (
         <section className="flex flex-col gap-5 lg:gap-10 justify-center items-center w-full max-w-7xl">
             <h1>Designar</h1>
-            <Formulario />
+            <DesignarContextProvider>
+                <Formulario />
+            </DesignarContextProvider>
         </section>
     )
 }
