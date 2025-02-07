@@ -233,21 +233,27 @@ export default function CartaoDeSemana({data, children, visualizacao, handleProx
                 </tbody>
             </table>
 
-            <div className="flex">
+            {!visualizacao && (
+                <>
+                
+                    <div className="flex">
 
-                <Tooltip content="Se achou algum erro nas designações, por favor, nos informe clicando no botão abaixo!"> 
-                    <Link
-                        target="_blank"
-                        href={`mailto:thiagomatheus2001@hotmail.com?subject=Erro encontrado na semana ${data.semana}&body=Encontrei o seguinte erro: (Coloque o erro encontrado aqui)`}
-                        className="bg-red-500 hover:bg-red-400 p-2 rounded-lg dark:text-gray-900 shadow-lg font-bold cursor-pointer print:hidden flex flex-col items-center"
-                    >
-                        Comunicar erro
-                    </Link>
-                </Tooltip>
+                        <Tooltip content="Se achou algum erro nas designações, por favor, nos informe clicando no botão abaixo!"> 
+                            <Link
+                                target="_blank"
+                                href={`mailto:thiagomatheus2001@hotmail.com?subject=Erro encontrado na semana ${data.semana}&body=Encontrei o seguinte erro: (Coloque o erro encontrado aqui)`}
+                                className="bg-red-500 hover:bg-red-600 p-2 rounded-lg dark:text-gray-900 shadow-lg font-bold cursor-pointer print:hidden flex flex-col items-center"
+                            >
+                                Comunicar erro
+                            </Link>
+                        </Tooltip>
 
-            </div>
+                    </div>
 
-            {!visualizacao && children}
+                    {children}
+
+                </>
+            )}
         </form>
     );
 }
