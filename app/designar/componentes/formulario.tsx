@@ -20,7 +20,7 @@ export default function Formulario() {
                     <p className="text-center">Começe a designar as partes da reunião Vida e Ministério agora mesmo. A baixo estão as instruções para você relembrar.</p>
                     <p className="text-center">Quando estiver pronto, clique no botão Iniciar.</p>
                     <Instrucoes />
-                    <button className="bg-blue-500 p-2 rounded-lg text-white shadow-lg font-bold" onClick={comecar}>Iniciar</button>
+                        className="bg-blue-500 hover:bg-blue-600 p-2 rounded-lg text-white shadow-lg font-bold"
                 </>
             )}
             {!data && layout === undefined && (
@@ -32,7 +32,7 @@ export default function Formulario() {
                             <Layout quantidadeDeSemanas={2} />
                             <Layout quantidadeDeSemanas={4} />
                         </div>
-                        <button className="bg-yellow-400 px-3 py-2 rounded-lg text-white dark:text-gray-900 shadow-lg w-fit font-bold self-end" type="submit" value="Próximo">Próximo</button>
+                            className="bg-yellow-400 px-3 py-2 rounded-lg text-white dark:text-gray-900 shadow-lg w-fit font-bold self-end hover:bg-yellow-500"
                     </form>
                 </SectionTitle>
             )}
@@ -51,7 +51,7 @@ export default function Formulario() {
                             <label className="flex flex-col gap-5">
                                 <Calendar />
                             </label>
-                            <button className="bg-purple-400 px-3 py-2 rounded-lg text-white dark:text-gray-900 shadow-lg w-fit font-bold self-end" type="submit" value="Próximo">Próximo</button>
+                                className="bg-purple-400 hover:bg-purple-500 px-3 py-2 rounded-lg text-white dark:text-gray-900 shadow-lg w-fit font-bold self-end"
                         </form>
                     </div>
                 </SectionTitle>
