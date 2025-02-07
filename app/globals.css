@@ -155,7 +155,7 @@ tr, td, table, tbody {
     }
 
     .impressao h1 {
-        @apply text-[20pt];
+        @apply text-[15pt];
         @apply text-white;
         @apply bg-blue-500;
     }
