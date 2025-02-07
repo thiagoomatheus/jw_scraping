@@ -308,9 +308,9 @@ export async function POST(req:NextRequest) {
 
     if (!usuario) return redirect("/login")
 
-    const partes: Partes = await req.json()
+    const partes: Partes[] = await req.json()
 
-    const designacoesSchema = z.object({
+    const designacoesSchema = z.array(z.object({
         id: z.string(),
         semana: z.string(),
         canticos: z.array(z.string()),
@@ -339,7 +339,7 @@ export async function POST(req:NextRequest) {
             nome: z.string(),
             participante: z.string()
         }, {message: "Dados recebidos incorretos"}))
-    })
+    }))
 
     const resultZod = designacoesSchema.safeParse(partes)
 
@@ -350,7 +350,7 @@ export async function POST(req:NextRequest) {
 
     const temDesignacao = await prisma.designacao.findFirst({
         where: {
-            semana: resultZod.data.semana,
+            semana: resultZod.data[0].semana,
             criadoPor: usuario.id
         }
     })
@@ -364,50 +364,51 @@ export async function POST(req:NextRequest) {
         criadoPor: string
         cong: number
         diaReuniao: string
-    }[] = [
-    ]
+    }[] = []
 
-    partes.outros.map(parte => {
-        designacoes.push({
-            semana: partes.semana,
-            participante: parte.participante!,
-            parte: parte.id!,
-            criadoPor: usuario.id!,
-            cong: usuario.cong!,
-            diaReuniao: partes.diaReuniao
+    partes.map((semana) => {
+        semana.outros.map(parte => {
+            designacoes.push({
+                semana: semana.semana,
+                participante: parte.participante!,
+                parte: parte.id!,
+                criadoPor: usuario.id!,
+                cong: usuario.cong!,
+                diaReuniao: partes[0].diaReuniao
+            })
         })
-    })
-
-    partes.tesouros.map(parte => {
-        designacoes.push({
-            semana: partes.semana,
-            participante: parte.participante!,
-            parte: parte.id!,
-            criadoPor: usuario.id!,
-            cong: usuario.cong!,
-            diaReuniao: partes.diaReuniao
+    
+        semana.outros.map(parte => {
+            designacoes.push({
+                semana: semana.semana,
+                participante: parte.participante!,
+                parte: parte.id!,
+                criadoPor: usuario.id!,
+                cong: usuario.cong!,
+                diaReuniao: semana.diaReuniao
+            })
         })
-    })
-
-    partes.ministerio.map(parte => {
-        designacoes.push({
-            semana: partes.semana,
-            participante: parte.participante!,
-            parte: parte.id!,
-            criadoPor: usuario.id!,
-            cong: usuario.cong!,
-            diaReuniao: partes.diaReuniao
+    
+        semana.outros.map(parte => {
+            designacoes.push({
+                semana: semana.semana,
+                participante: parte.participante!,
+                parte: parte.id!,
+                criadoPor: usuario.id!,
+                cong: usuario.cong!,
+                diaReuniao: semana.diaReuniao
+            })
         })
-    })
-
-    partes.vida.map(parte => {
-        designacoes.push({
-            semana: partes.semana,
-            participante: parte.participante!,
-            parte: parte.id!,
-            criadoPor: usuario.id!,
-            cong: usuario.cong!,
-            diaReuniao: partes.diaReuniao
+    
+        semana.outros.map(parte => {
+            designacoes.push({
+                semana: semana.semana,
+                participante: parte.participante!,
+                parte: parte.id!,
+                criadoPor: usuario.id!,
+                cong: usuario.cong!,
+                diaReuniao: semana.diaReuniao
+            })
         })
     })
 
