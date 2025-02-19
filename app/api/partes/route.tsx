@@ -378,7 +378,7 @@ export async function POST(req:NextRequest) {
             })
         })
     
-        semana.outros.map(parte => {
+        semana.tesouros.map(parte => {
             designacoes.push({
                 semana: semana.semana,
                 participante: parte.participante!,
@@ -389,7 +389,7 @@ export async function POST(req:NextRequest) {
             })
         })
     
-        semana.outros.map(parte => {
+        semana.vida.map(parte => {
             designacoes.push({
                 semana: semana.semana,
                 participante: parte.participante!,
@@ -400,7 +400,7 @@ export async function POST(req:NextRequest) {
             })
         })
     
-        semana.outros.map(parte => {
+        semana.ministerio.map(parte => {
             designacoes.push({
                 semana: semana.semana,
                 participante: parte.participante!,
@@ -411,6 +411,9 @@ export async function POST(req:NextRequest) {
             })
         })
     })
+
+    console.log(designacoes);
+    
 
     await prisma.designacao.createManyAndReturn({
         data: designacoes
