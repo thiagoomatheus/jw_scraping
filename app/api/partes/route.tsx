@@ -389,7 +389,7 @@ export async function POST(req:NextRequest) {
             })
         })
     
-        semana.vida.map(parte => {
+        semana.ministerio.map(parte => {
             designacoes.push({
                 semana: semana.semana,
                 participante: parte.participante!,
@@ -400,7 +400,7 @@ export async function POST(req:NextRequest) {
             })
         })
     
-        semana.ministerio.map(parte => {
+        semana.vida.map(parte => {
             designacoes.push({
                 semana: semana.semana,
                 participante: parte.participante!,
