@@ -222,16 +222,26 @@ export async function notificarParticipante(designacaoId: string, parametrosDaMe
 `
     }
 
-    const resNotificarParticipante = await fetch(`${process.env.EVOLUTION_API_URL}/message/sendText/${usuario.instanciaWhatsApp}`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "apiKey": process.env.AUTHENTICATION_API_KEY!
-        },
-        body: JSON.stringify({
-            number: `55${parametrosDaMensagem.telefone}`,
-            textMessage: {
-                text: `
+    console.log("Instância WhatsApp:", usuario.instanciaWhatsApp);
+    console.log("Número de Telefone:", parametrosDaMensagem.telefone);
+
+
+    const retryLimit = 3;
+    let retryCount = 0;
+    let resNotificarParticipante;
+
+    while (retryCount < retryLimit) {
+      try {
+        resNotificarParticipante = await fetch(`${process.env.EVOLUTION_API_URL}/message/sendText/${usuario.instanciaWhatsApp}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "apiKey": process.env.AUTHENTICATION_API_KEY!
+            },
+            body: JSON.stringify({
+                number: `55${parametrosDaMensagem.telefone}`,
+                textMessage: {
+                    text: `
 ${saudacao}
 
 Passando para confirmar sua designação para o dia ${designacao.diaReuniao}:
@@ -245,23 +255,54 @@ ${corpo ? `Por favor, confirme sua participação.
 
 Obrigado!`: ``}
 `
-            }
-        })
-    })
+                }
+            })
+        });
 
-    if (resNotificarParticipante.status !== 201) {
-        const error = await resNotificarParticipante.json()
-        console.log(error.response.message)
-        
-        return { error: {
-            code: 401,
-            message: "Erro ao notificar participante. Tente novamente mais tarde."
-        }}
+        console.log("Status HTTP da Evolution:", resNotificarParticipante.status);
+
+        if (resNotificarParticipante.status === 201) {
+          // Sucesso!
+          return { data: {
+              code: resNotificarParticipante.status,
+              message: "Participante notificado com sucesso!"
+          }};
+        } else {
+          // Erro
+          const error = await resNotificarParticipante.json();
+          console.error("Erro da API Evolution:", error);
+          console.log(error.response?.message); // Tentativa de log mais específico
+
+          // Adicione tratamento específico para diferentes códigos de status
+          if (resNotificarParticipante.status === 401) {
+            // Não autorizado - pode indicar problema na chave da API
+            return { error: {
+                code: 401,
+                message: "Erro de autenticação na API do WhatsApp. Verifique sua chave de API."
+            }};
+          } else if (resNotificarParticipante.status >= 500) {
+            // Erro no servidor da Evolution - tentar novamente
+            console.warn(`Erro no servidor da Evolution. Tentando novamente (${retryCount + 1}/${retryLimit}).`);
+          } else {
+            // Outro erro (e.g., 400 Bad Request) - não tentar novamente
+            return { error: {
+                code: 401, // ou o código correto
+                message: "Erro ao notificar participante. Tente novamente mais tarde."
+            }};
+          }
+        }
+      } catch (error) {
+          console.error("Erro inesperado ao chamar a API Evolution:", error);
+          console.warn(`Tentando novamente (${retryCount + 1}/${retryLimit}).`);
+      }
+
+      retryCount++;
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Espera 1 segundo antes de tentar novamente
     }
-    
-    return { data: {
-        code: resNotificarParticipante.status,
-        message: "Participante notificado com sucesso!"
-    }}
 
+    // Se chegou aqui, todas as tentativas falharam
+    return { error: {
+        code: 401, // ou um código mais apropriado
+        message: "Erro ao notificar participante após várias tentativas. Tente novamente mais tarde."
+    }};
 }
