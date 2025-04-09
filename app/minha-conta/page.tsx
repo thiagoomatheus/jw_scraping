@@ -22,7 +22,7 @@ export default async function Page() {
 
     if (!usuario) return redirect("/login")
 
-    let statusIntanciaWhatsApp: "open" | "closed" | undefined = undefined
+    let statusIntanciaWhatsApp: "open" | "close" | undefined = undefined
 
     if (usuario.funcao === "designar") {
         await fetch(`${process.env.EVOLUTION_API_URL}/instance/connectionState/${usuario.instanciaWhatsApp}`, {

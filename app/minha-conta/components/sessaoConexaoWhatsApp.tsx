@@ -9,7 +9,7 @@ import Modal from "@/app/componentes/modal"
 
 export default function SessaoConexaoWhatsApp( { instancia, status, emailUsuario }: {
     instancia: string | null
-    status: "open" | "closed" | undefined
+    status: "open" | "close" | undefined
     emailUsuario: string
 } ) {
     
@@ -33,12 +33,12 @@ export default function SessaoConexaoWhatsApp( { instancia, status, emailUsuario
 
                     })
                     
-                    setStatusInstancia("closed")
+                    setStatusInstancia("close")
 
                 }}
                 className="bg-red-500">Desconectar</Btn>
             )}
-            {instancia && statusInstancia === "closed" && (
+            {instancia && statusInstancia === "close" && (
                 <>
                     <Btn onClick={async () => {
 
