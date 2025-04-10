@@ -263,6 +263,16 @@ Obrigado!`: ``}
 
         if (resNotificarParticipante.status === 201) {
           // Sucesso!
+
+          await prisma.designacao.update({
+            where: {
+                id: designacao.id
+            },
+            data: {
+                notificado: true
+            }
+          })
+
           return { data: {
               code: resNotificarParticipante.status,
               message: "Participante notificado com sucesso!"

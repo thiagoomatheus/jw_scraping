@@ -147,6 +147,17 @@ Obrigado!
                         })
                     
                         if (resNotificarParticipante.status === 201) {
+
+                            await prisma.designacao.update({
+                                where: {
+                                    id: designacao.id
+                                },
+                                data: {
+                                    telefone: null,
+                                    notificado: true
+                                }
+                            })
+
                             console.log({
                                 data: {
                                     code: resNotificarParticipante.status,
@@ -167,7 +178,7 @@ Obrigado!
                                 },
                             });
                         }
-                        
+
                     } catch (error) {
                         
                         console.error('Erro ao enviar notificação para designação ' + designacao.id + ':', error);
