@@ -53,7 +53,8 @@ model Designacao {
   participante     String
   cong             Int
   criadoPor        String
-  telefone          String?
+  telefone         String?
+  notificado       Boolean? @default(false)
   formaDeTratamento String?
   obsText           String?
   nome Boolean?
