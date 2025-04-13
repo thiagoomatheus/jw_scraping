@@ -34,13 +34,33 @@ export default function SecaoDeDesignacoes({ designacoes, autorizadoParaAcoes, c
                     <p>Obs: Apenas um filtro funciona por vez.</p>
                     <form className="flex flex-col gap-5">
                         <label className="flex gap-5 justify-between items-center">
-                            <p>Semana:</p>
-                            <select onChange={(e) => setDesignacoesFiltradas(designacoes.filter(designacao => designacao.semanaReference.semana === e.target.value))} name="semana">
-                                <option disabled selected>Selecione uma semana</option>
+
+                            <p>Data da reunião:</p>
+
+                            <select
+                                onChange={(e) => {
+                                    setDesignacoesFiltradas(designacoes.filter(designacao => designacao.semanaReference.diaReuniao === e.target.value))
+                                }} 
+                                name="semana"
+                            >
+                                <option
+                                    disabled
+                                    selected
+                                >
+                                    Selecione uma data
+                                </option>
+
                                 {Array.from(semanas).map(semana => (
-                                    <option key={semana} value={semana}>{semana}</option>
+                                    <option
+                                        key={semana}
+                                        value={semana}
+                                    >
+                                        {semana}
+                                    </option>
                                 ))}
+
                             </select>
+
                         </label>
                         <label className="flex gap-5 justify-between items-center">
                             <p>Participante:</p>
