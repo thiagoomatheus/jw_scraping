@@ -34,21 +34,37 @@ export default function SecaoDeDesignacoes({ designacoes, autorizadoParaAcoes, c
                 <Modal>
 
                     <h3>Filtrar</h3>
-                    <p>Obs: Apenas um filtro funciona por vez.</p>
 
                     <form
                         className="flex flex-col gap-5"
-                        
+                        action={(formData: FormData) => {
+
+                            const diaReuniao = formData.get("diaReuniao") as string | null
+                            const participante = formData.get("participante") as string | null
+
+                            console.log(diaReuniao, participante);
+
+                            if (!diaReuniao && !participante) {
+                                setDesignacoesFiltradas(designacoes)
+                            }
+
+                            if (diaReuniao && participante) {
+                                setDesignacoesFiltradas(designacoes.filter(designacao => designacao.semanaReference.semana === diaReuniao).filter(designacao => designacao.participante === participante))
+                            } else if (diaReuniao) {
+                                setDesignacoesFiltradas(designacoes.filter(designacao => designacao.semanaReference.semana === diaReuniao))
+                            } else if (participante) {
+                                setDesignacoesFiltradas(designacoes.filter(designacao => designacao.participante === participante))
+                            }
+
+                            setModal(false)
+                        }}
                     >
-                        <label className="flex gap-5 justify-between items-center">
+                        <label className="grid grid-cols-[0.5fr_1fr] gap-5 justify-between items-center">
 
                             <p>Data da reunião:</p>
 
                             <select
-                                onChange={(e) => {
-                                    setDesignacoesFiltradas(designacoes.filter(designacao => designacao.semanaReference.diaReuniao === e.target.value))
-                                }} 
-                                name="semana"
+                                name="diaReuniao"
                             >
                                 <option
                                     disabled
@@ -70,14 +86,11 @@ export default function SecaoDeDesignacoes({ designacoes, autorizadoParaAcoes, c
 
                         </label>
 
-                        <label className="flex gap-5 justify-between items-center">
+                        <label className="grid grid-cols-[0.5fr_1fr] gap-5 justify-between items-center">
 
                             <p>Participante:</p>
 
                             <select
-                                onChange={(e) => {
-                                    setDesignacoesFiltradas(designacoes.filter(designacao => designacao.participante === e.target.value))
-                                }}
                                 name="participante"
                             >
 
@@ -101,9 +114,11 @@ export default function SecaoDeDesignacoes({ designacoes, autorizadoParaAcoes, c
 
                         </label>
 
+                        <Btn type="submit">Aplicar</Btn>
+
                     </form>
 
-                    <Btn onClick={() => setModal(false)}>Fechar</Btn>
+                    
 
                 </Modal>
             )}
@@ -117,7 +132,7 @@ export default function SecaoDeDesignacoes({ designacoes, autorizadoParaAcoes, c
                         autorizadoParaAcoes={autorizadoParaAcoes}
                         contatos={contatos}
                     />
-                    
+
                 ))}
             </section>
                 
