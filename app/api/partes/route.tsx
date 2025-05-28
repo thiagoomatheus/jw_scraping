@@ -374,7 +374,7 @@ export async function POST(req:NextRequest) {
                 parte: parte.id!,
                 criadoPor: usuario.id!,
                 cong: usuario.cong!,
-                diaReuniao: partes[0].diaReuniao
+                diaReuniao: semana.diaReuniao
             })
         })
     
