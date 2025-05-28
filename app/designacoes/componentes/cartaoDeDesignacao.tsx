@@ -350,7 +350,7 @@ export default function CartaoDeDesignacao( { designacao, excluir, autorizadoPar
 
                 <div className="flex flex-row justify-between items-center">
                     <p>
-                        <span className="font-bold">Data:</span> {dadosDesignacao.semanaReference.diaReuniao}
+                        <span className="font-bold">Data:</span> {dadosDesignacao.diaReuniao}
                     </p>
 
                     <div className="flex flex-row gap-2">
