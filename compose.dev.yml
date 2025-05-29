@@ -23,7 +23,7 @@ services:
   # Add more containers below (nginx, postgres, etc.)
 
   db:
-    container_name: postgres
+    container_name: postgres-designacoes
     image: postgres:15-alpine
     restart: always
     environment:
@@ -35,7 +35,7 @@ services:
       - '5432:5432'
 
   evolution-api:
-    container_name: evolution_api
+    container_name: evolution_api-designacoes
     image: atendai/evolution-api:v1.8.0
     restart: always
     ports:
