@@ -50,14 +50,14 @@ export default function CartaoDeSemana({data, children, visualizacao, handleProx
 
                         <TdBase className="border-r flex items-center" >
                             Oração:{!visualizacao ? 
-                                        <Textarea required name="oracao_inicial" /> 
+                                        <Textarea required name="oracao_inicial" defaultValue={data?.outros.find((parte) => parte.nome === "Oração Inicial")?.participante} /> 
                                         : data?.outros.find((parte) => parte.nome === "Oração Inicial")?.participante
                                     }
                         </TdBase>
 
                         <TdBase className="flex items-center" >
                             Comentários iniciais:{!visualizacao ? 
-                                                    <Textarea required name="presidente" /> 
+                                                    <Textarea required name="presidente" defaultValue={data?.outros.find((parte) => parte.nome === "Presidente")?.participante} /> 
                                                     : data?.outros.find((parte) => parte.nome === "Presidente")?.participante
                                                 }
                         </TdBase>
@@ -101,6 +101,7 @@ export default function CartaoDeSemana({data, children, visualizacao, handleProx
                                                 required
                                                 key={`participante-${index}`}
                                                 name={parte.nome[0]}
+                                                defaultValue={parte.participante}
                                             /> :
                                             parte.participante
                                         }
@@ -142,6 +143,7 @@ export default function CartaoDeSemana({data, children, visualizacao, handleProx
                                                 required
                                                 key={`participante-${index}`}
                                                 name={parte.nome[0]}
+                                                defaultValue={parte.participante}
                                             /> :
                                             parte.participante
                                         }
@@ -189,6 +191,7 @@ export default function CartaoDeSemana({data, children, visualizacao, handleProx
                                                 required
                                                 key={`participante-${index}`}
                                                 name={parte.nome[0]}
+                                                defaultValue={parte.participante}
                                             /> :
                                             parte.participante
                                         }
@@ -205,7 +208,7 @@ export default function CartaoDeSemana({data, children, visualizacao, handleProx
 
                         <TdBase>
                             -{!visualizacao ? 
-                                <Textarea required name="leitor" /> 
+                                <Textarea required name="leitor" defaultValue={data?.outros.find((parte) => parte.nome === "Leitor")?.participante} /> 
                                 : data?.outros.find((parte) => parte.nome === "Leitor")?.participante
                             }
                         </TdBase>
@@ -224,7 +227,7 @@ export default function CartaoDeSemana({data, children, visualizacao, handleProx
 
                         <TdBase className="flex items-center">
                             Oração: {!visualizacao ? 
-                                        <Textarea required name="oracao_final" /> 
+                                        <Textarea required name="oracao_final" defaultValue={data?.outros.find((parte) => parte.nome === "Oração Final")?.participante} /> 
                                         : data?.outros.find((parte) => parte.nome === "Oração Final")?.participante
                                     }
                         </TdBase>

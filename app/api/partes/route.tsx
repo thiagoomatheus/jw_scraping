@@ -8,7 +8,7 @@ import { ptBR } from "date-fns/locale"
 import { redirect } from "next/navigation"
 import { NextRequest, NextResponse } from "next/server"
 import { z } from "zod"
-import { Partes } from "@/app/lib/types/types"
+import { Parte as ParteType, Partes } from "@/app/lib/types/types"
 import { prisma } from "@/app/lib/prisma/prisma"
 import { Parte, Semana } from "@prisma/client"
 
@@ -30,7 +30,14 @@ async function getPartes(year: number, week: number, layout: number) {
             }
         },
         include: {
-            partes: true
+            partes: true,
+            designacao: {
+                select: {
+                    diaReuniao: true,
+                    parteReference: true,
+                    participante: true
+                }
+            }
         }
     })
 
@@ -40,34 +47,38 @@ async function getPartes(year: number, week: number, layout: number) {
 
     const partes: Partes[] = []
 
-    semanaDb.map((semana: Semana & { partes: Parte[] }) => {
+    semanaDb.map((semana: Semana & { partes: Parte[] } & { designacao: { diaReuniao: string, participante: string, parteReference: Parte }[] }) => {
         partes.push({
             id: semana.id,
             semana: semana.semana,
             canticos: [semana.canticoInicial, semana.canticoMeio, semana.canticoFinal],
             capitulos: semana.capitulos,
-            diaReuniao: semana.diaReuniao,
+            diaReuniao: semana.designacao.length ? semana.designacao[0].diaReuniao : semana.diaReuniao,
             outros: semana.partes.filter((parte) => !parte.secao).map((parte) => ({
                 id: parte.id,
                 nome: parte.nome,
+                participante: semana.designacao ? semana.designacao.find((designacao) => designacao.parteReference.id === parte.id)?.participante : undefined
             })),
             tesouros: semana.partes.filter((parte) => parte.secao === "tesouros").map((parte) => ({
                 id: parte.id,
                 nome: parte.nome,
-                tempo: parte.tempo!
+                tempo: parte.tempo!,
+                participante: semana.designacao ? semana.designacao.find((designacao) => designacao.parteReference.id === parte.id)?.participante : undefined
             })),
             ministerio: semana.partes.filter((parte) => parte.secao === "ministerio").map((parte) => ({
                 id: parte.id,
                 nome: parte.nome,
-                tempo: parte.tempo!
+                tempo: parte.tempo!,
+                participante: semana.designacao ? semana.designacao.find((designacao) => designacao.parteReference.id === parte.id)?.participante : undefined
             })),
             vida: semana.partes.filter((parte) => parte.secao === "vida").map((parte) => ({
                 id: parte.id,
                 nome: parte.nome,
-                tempo: parte.tempo!
+                tempo: parte.tempo!,
+                participante: semana.designacao ? semana.designacao.find((designacao) => designacao.parteReference.id === parte.id)?.participante : undefined
             }))
         })
-    })    
+    })
 
     return partes
 }
@@ -348,76 +359,105 @@ export async function POST(req:NextRequest) {
         return NextResponse.json({error: resultZod.error}, { status: 500 })
     }
 
-    const temDesignacao = await prisma.designacao.findFirst({
-        where: {
-            semana: resultZod.data[0].semana,
-            criadoPor: usuario.id
-        }
-    })
+    const semanasSalvas: string[] = []
 
-    if (temDesignacao) return NextResponse.json({ error: "Ja existe uma designação para esta semana" }, { status: 401 })
+    for (let i = 0; i < resultZod.data.length; i++) {
+
+        const designacoesExistentes = await prisma.designacao.findMany({
+            where: {
+                semana: resultZod.data[i].semana,
+                criadoPor: usuario.id
+            }
+        })
+
+        const temDesignacao = designacoesExistentes.length > 0
+
+        if (temDesignacao) {
+
+            if (designacoesExistentes.length > 6) {
+                try {
+                    await prisma.designacao.deleteMany({
+                        where: {
+                            semana: resultZod.data[i].semana,
+                            criadoPor: usuario.id
+                        }
+                    })
+                    continue
+                } catch (error) {
+                    console.warn(error);
+                    return NextResponse.json({ error: 'Erro ao atualizar designações existentes' }, { status: 401 })
+                }
+            }
+
+            const designacoesASalvar: ParteType[] = [...resultZod.data[i].outros, ...resultZod.data[i].tesouros, ...resultZod.data[i].ministerio, ...resultZod.data[i].vida]
+
+            try {
+
+                for (const parte of designacoesASalvar) {
+                    await prisma.designacao.upsert({
+                        where: {
+                            id: parte.id
+                        },
+                        update: {
+                            participante: parte.participante,
+                            criadoPor: usuario.id,
+                            diaReuniao: resultZod.data[i].diaReuniao
+                        },
+                        create: {
+                            semana: resultZod.data[i].semana,
+                            parte: parte.id!,
+                            participante: parte.participante!,
+                            criadoPor: usuario.id,
+                            cong: usuario.cong!,
+                            diaReuniao: resultZod.data[i].diaReuniao
+                        }
+                    })
+                }
+                
+            } catch (error) {
+                console.warn(error);
+                return NextResponse.json({ error: 'Erro ao atualizar designações existentes' }, { status: 401 })
+            }
+
+            semanasSalvas.push(resultZod.data[i].semana)
+        }
+    }
+
+    if (semanasSalvas.length === resultZod.data.length) {
+        return NextResponse.json({ message: "Designações salvas com sucesso" }, { status: 200 })
+        
+    }
     
     const designacoes: {
-        semana: string
-        parte: string
-        participante: string
-        criadoPor: string
-        cong: number
-        diaReuniao: string
-    }[] = []
+    semana: string
+    parte: string
+    participante: string
+    criadoPor: string
+    cong: number
+    diaReuniao: string
+}[] = partes
+    .filter((semana) => !semanasSalvas.includes(semana.semana))
+    .flatMap((semana) => {
+        const todasAsPartesDaSemana = [
+            ...semana.outros,
+            ...semana.tesouros,
+            ...semana.ministerio,
+            ...semana.vida
+        ];
 
-    partes.map((semana) => {
-        semana.outros.map(parte => {
-            designacoes.push({
-                semana: semana.semana,
-                participante: parte.participante!,
-                parte: parte.id!,
-                criadoPor: usuario.id!,
-                cong: usuario.cong!,
-                diaReuniao: semana.diaReuniao
-            })
-        })
-    
-        semana.tesouros.map(parte => {
-            designacoes.push({
-                semana: semana.semana,
-                participante: parte.participante!,
-                parte: parte.id!,
-                criadoPor: usuario.id!,
-                cong: usuario.cong!,
-                diaReuniao: semana.diaReuniao
-            })
-        })
-    
-        semana.ministerio.map(parte => {
-            designacoes.push({
-                semana: semana.semana,
-                participante: parte.participante!,
-                parte: parte.id!,
-                criadoPor: usuario.id!,
-                cong: usuario.cong!,
-                diaReuniao: semana.diaReuniao
-            })
-        })
-    
-        semana.vida.map(parte => {
-            designacoes.push({
-                semana: semana.semana,
-                participante: parte.participante!,
-                parte: parte.id!,
-                criadoPor: usuario.id!,
-                cong: usuario.cong!,
-                diaReuniao: semana.diaReuniao
-            })
-        })
-    })
-
-    console.log(designacoes);
-    
+        return todasAsPartesDaSemana.map(parte => ({
+            semana: semana.semana,
+            participante: parte.participante!,
+            parte: parte.id!,
+            criadoPor: usuario.id!,
+            cong: usuario.cong!,
+            diaReuniao: semana.diaReuniao
+        }));
+    });
 
     await prisma.designacao.createManyAndReturn({
         data: designacoes
     })
 
-    return NextResponse.json({}, { status: 200 })
+    return NextResponse.json({ message: "Designações salvas com sucesso" }, { status: 200 })
 }

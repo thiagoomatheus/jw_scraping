@@ -8,6 +8,7 @@ import Link from "next/link"
 import useDesignacaoes from "../lib/hooks/useDesignacoes"
 import DownloadPDFBtn from "./DownloadPDFBtn"
 import toast from "react-hot-toast"
+import { Badge } from "@/app/componentes/Badge"
 
 export default function SecaoDeDesignacoes() {
 
@@ -18,15 +19,20 @@ export default function SecaoDeDesignacoes() {
     const { salvandoDesignacoes } = useDesignacaoes()
 
     if (!semanas || !semanas.length) return <p>Ocorreu um erro! Por favor, tente mais tarde.</p>
+    
+    const dados = semanas[semana-1]
 
     return (
         <div className="flex flex-col gap-5 print:gap-[10px] overflow-auto pb-3 md:pb-0 impressao">
             {semana <= semanas.length && (
                 <>
-                    <h3>Semana {semana} / {semanas.length}</h3>
+                    <div className="flex flex-row items-center justify-between">
+                        <h3>Semana {semana} / {semanas.length}</h3>
+                        {(dados.outros.find((parte) => parte.participante) || dados.tesouros.find((parte) => parte.participante) || dados.ministerio.find((parte) => parte.participante)) && <Badge variant="warning">Semana contém designações</Badge>}
+                    </div>
                     <CartaoDeSemana
                         key={semanas[semana-1].semana}
-                        data={semanas[semana-1]}
+                        data={dados}
                         visualizacao={false}
                         handleProximo={() => {
                             setSemana(semana + 1)
